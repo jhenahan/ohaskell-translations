@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc115" class="calibre8">do: императивный мир</h2>
+    <p class="calibre16">Вы прочли правильно: императивный мир. Несмотря на то, что Haskell является чисто функциональным языком, в случае необходимости мы <span class="calibre18">можем</span> написать императивный код. А при работе с внешним миром необходимость такая возникает постоянно.</p>
+    <p class="calibre16">Как вы знаете, императивный подход подразумевает выполнение программных инструкций в чётко указанном порядке. В чистых функциях такой подход излишен, потому что в них неважен порядок вычисления выражений. Однако в функциях, взаимодействующих с внешним миром, ситуация кардинально меняется.</p>
+    <p class="calibre16">Вспомним наш пример работы со стандартными вводом и выводом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Input your text, please:" </span>      </p>
+    <p class="aa">    lineFromUser &lt;- <span>getLine</span>               </p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"Not bad: "</span> ++ lineFromUser   </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы делаем три шага:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">выводим на экран приветственную строку;</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">дожидаемся, пока пользователь введёт свой текст;</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">выводим на экран итоговую строку.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Разумеется, мы ожидаем, что эти три шага будут выполнены именно в таком порядке. Согласитесь, было бы странно выводить на экран итоговую строку, не дождавшись введённого пользователем текста. При работе с внешним миром мы всегда подразумеваем определённый порядок наших шагов. Например, сервер, получив запрос от клиента, должен сначала его обработать, потом сформировать ответ, и только потом отправить его клиенту.</p>
+    <p class="calibre16">Именно для этой цели и введено ключевое слово <span class="SourceText">do</span>: оно связывает наши действия в последовательную цепочку. Говоря об этом ключевом слове, обычно используют термин «<span class="SourceText">do</span>-нотация».</p>
+    <h3 id="toc116" class="calibre22">Не только <span class="SourceText2"><span class="calibre29">main</span></span></h3>
+    <p class="calibre16">Мы можем использовать <span class="SourceText">do</span>-нотацию в любой функции с побочными эффектами. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainUserText</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainUserText</span> prompt = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> prompt  <span class="aa1">-- Выведи приглашение ввести строку.</span></p>
+    <p class="aa">    <span>getLine</span>          <span class="aa1">-- Получи от пользователя некую строку.</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    firstText &lt;- <span>obtainUserText</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    secondText &lt;- <span>obtainUserText</span> <span class="a1">"One more, please: "</span></p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"You said '"</span> ++ firstText ++ <span class="a1">"' and '"</span> ++ secondText ++ <span class="a1">"'"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">obtainUserText</span> заключает в себе два последовательных шага, поэтому в ней тоже используется слово <span class="SourceText">do</span>. Мы ожидаем, что сначала будет выведено соответствующее приглашение на экран, и только после этого действие, порождённое функцией <span class="SourceText">getLine</span>, отправится во внешний мир и вернётся оттуда с введённой пользователем строкой.</p>
+    <h3 id="toc117" class="calibre22">О функции <span class="SourceText2"><span class="calibre29">return</span></span></h3>
+    <p class="calibre16">В языке C есть ключевое слово <span class="SourceText">return</span>, задающее точку возврата из функции. В Haskell нет такого ключевого слова, зато есть такая функция. И чтобы продемонстрировать её назначение, рассмотрим другой пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    firstText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"One more, please: "</span></p>
+    <p class="aa">    secondText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span class="a1">"'"</span> ++ firstText ++ <span class="a1">"' and '"</span> ++ secondText ++ <span class="a1">"'"</span> <span class="aa1">-- простая строка??</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    twoTexts &lt;- <span>obtainTwoTextsFromUser</span></p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"You said "</span> ++ twoTexts</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">obtainTwoTextsFromUser</span> берёт на себя ответственность последовательно получить от пользователя два текста и вернуть составленную из них строку.</p>
+    <p class="calibre16">К сожалению, такой код не пройдёт компиляцию, ибо эта функция возвращает действие, однако последней по счёту инструкцией идёт вовсе не действие, а обыкновенная строка. Тут-то и приходит нам на помощь стандартная функция <span class="SourceText">return</span>.</p>
+    <p class="calibre16">Перепишем нашу функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    firstText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"One more, please: "</span></p>
+    <p class="aa">    secondText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>return</span> $ <span class="a1">"'"</span> ++ firstText ++ <span class="a1">"' and '"</span> ++ secondText ++ <span class="a1">"'"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Императивно выглядит, не правда ли? Только не забывайте, что с ключевым словом <span class="SourceText">return</span> в языке C такая запись не имеет ничего общего.</p>
+    <p class="calibre16">Функция <span class="SourceText">return</span> берёт значение и оборачивает его в действие, возвращающее это значение. В нашем случае мы передали ей строку, составленную из пользовательских текстов, а на выходе получили действие, возвращающее эту строку. Поэтому теперь наш код успешно скомпилируется.</p>
+    <p class="calibre16">Кстати, чтобы доказать вам, что функция <span class="SourceText">return</span> действительно не имеет никакого отношения к ключевому слову <span class="SourceText">return</span> в C-подобных языках, я позволю себе небольшое хулиганство:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    firstText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"One more, please: "</span></p>
+    <p class="aa">    secondText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>return</span> $ <span class="a1">"'"</span> ++ firstText ++ <span class="a1">"' and '"</span> ++ secondText ++ <span class="a1">"'"</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"And third text, please: "</span> <span class="aa1">-- мы всё ещё продолжаем наш диалог!</span></p>
+    <p class="aa">    <span>getLine</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это может сбить с толку программистов, имеющих опыт в императивном программировании, но, как уже и было сказано выше, функция <span class="SourceText">return</span> всего лишь оборачивает значение в действие, возвращающее это значение. Она не прерывает ход наших действий, и если за ней есть другие действия, они спокойно продолжат выполняться. Фактически, в этой хулиганской функции мы потеряем два первых пользовательских текста и вернём действие, которое принесёт нам только третий текст.</p>
+    <p class="calibre16">Готово. Теперь вы знаете о ключевом слове <span class="SourceText">do</span>.</p>
+    <h3 id="toc118" class="calibre22">Обработка исключений</h3>
+    <p class="calibre16">Мы все стремимся создавать программные системы, свободные от ошибок. И всё же иногда они появляются, а значит, нам приходится иметь с ними дело. Поговорим про исключения, тем более что знать о них необходимо: многие пакеты из Hackage содержат код, кидающийся исключениями.</p>
+    <p class="calibre16">Нам понадобится модуль <span class="SourceText">Control.Exception</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Control.Exception</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Этот стандартный модуль предназначен для кидания и ловли исключений, причём как стандартных, так и наших собственных. Важно отметить: мы можем <span class="calibre18">бросить</span> исключение как из чистых функций, так и из функций с побочными эффектами, однако <span class="calibre18">поймать</span> его в чистой функции мы не сможем.</p>
+    <h3 id="toc119" class="calibre22">Проблема с файлом</h3>
+    <p class="calibre16">Чаще всего мы будем сталкиваться с исключениями, брошенными из функций, взаимодействующих с внешним миром. Канонический пример: мы хотим прочесть содержимое файла, который отсутствует:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    fileContent &lt;- <span>readFile</span> <span class="a1">"Users/shevchenko/test.c"</span>  <span class="aa1">-- неверный путь</span></p>
+    <p class="aa">    <span>putStrLn</span> fileContent</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Real: Users/shevchenko/test.c: openFile: does not exist (No such file or directory)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">readFile</span> бросила исключение, ведь сообщить о проблеме с файлом она может только так. Исключение, не найдя преград на своём пути, было поймано уже на самом верхнем уровне приложения, после чего сообщение об ошибке было выведено нам, а само приложение скоропостижно скончалось.</p>
+    <p class="calibre16"> </p>
+    <h3 id="toc120" class="calibre22">Ловим</h3>
+    <p class="calibre16">Итак:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Control.Exception</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>tryToOpenFile</span> :: <span class="aaaa">FilePath</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>tryToOpenFile</span> path = </p>
+    <p class="aa">    <span>readFile</span> path <span>`catch`</span> <span>possibleErrors</span></p>
+    <p class="aa">    <span class="aaa">where</span></p>
+    <p class="aa">        <span>possibleErrors</span> :: <span class="aaaa">IOException</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa">        <span>possibleErrors</span> error = <span>return</span> $ <span>show</span> error</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    fileContent &lt;- <span>tryToOpenFile</span> <span class="a1">"Users/shevchenko/test.c"</span></p>
+    <p class="aa">    <span>putStrLn</span> fileContent</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь у нас есть функция <span class="SourceText">tryToOpenFile</span>, которая открывает файл по заданному пути, но делает это осторожно, используя функцию <span class="SourceText">catch</span>. Как вы уже поняли, функция <span class="SourceText">catch</span>, определённая в модуле <span class="SourceText">Control.Exception</span>, умеет ловить исключения. Вот её объявление:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>catch</span> :: <span class="aaaa">Exception</span> e =&gt; <span class="aaaa">IO</span> a -&gt; (e -&gt; <span class="aaaa">IO</span> a) -&gt; <span class="aaaa">IO</span> a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция принимает два аргумента: первым идёт <span class="SourceText">IO</span>-действие, вторым идёт функция-обработчик. Если действие бросило исключение, отражённое полиморфным типом <span class="SourceText">e</span>, оно, это исключение, будет передано обработчику.</p>
+    <p class="calibre16">Обратите внимание: тип исключения входит в контекст класса <span class="SourceText">Exception</span>, определённого в том же модуле <span class="SourceText">Control.Exception</span>. Любое исключение в вашем приложении обязано входить в контекст этого класса.</p>
+    <p class="calibre16">Для большей читабельности мы используем инфиксную запись функции <span class="SourceText">catch</span>, с которой гармонирует имя нашего обработчика:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>readFile</span> path <span>`catch`</span> <span>possibleErrors</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Если при чтении файла возникла проблема, соответствующее исключение поступает на вход нашего обработчика:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>possibleErrors</span> :: <span class="aaaa">IOException</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>possibleErrors</span> error = <span>return</span> $ <span>show</span> error</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обработчик принимает значение типа <span class="SourceText">IOException</span>. В теле обработчика мы «стрингифицируем» полученное исключение, а затем готовую строку, содержащую описание произошедшей ошибки, заворачиваем в действие <span class="SourceText">IO String</span>. Если же нас не устраивает уже имеющееся сообщение об ошибке — предоставим своё:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>possibleErrors</span> error = <span>return</span> <span class="a1">"Unable to open this file. Please check it."</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это сообщение и будет выведено на экран в случае возникновения проблемы.</p>
+    <h3 id="toc121" class="calibre22">Ловим наоборот</h3>
+    <p class="calibre16">Перепишем нашу функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>tryToOpenFile</span> :: <span class="aaaa">FilePath</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>tryToOpenFile</span> path = </p>
+    <p class="aa">    <span>handle</span> <span>possibleErrors</span> (<span>readFile</span> path)  <span class="aa1">-- то же самое, но наоборот...</span></p>
+    <p class="aa">    <span class="aaa">where</span></p>
+    <p class="aa">        <span>possibleErrors</span> :: <span class="aaaa">IOException</span> -&gt; <span class="aaaa">IO String</span></p>
+    <p class="aa">        <span>possibleErrors</span> error = <span>return</span> <span class="a1">"Aaaaa!!! Please check file."</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы заменили функцию <span class="SourceText">catch</span> на функцию <span class="SourceText">handle</span>. Никакой разницы между этими функциями нет, за исключением порядка следования аргументов: <span class="SourceText">catch</span> принимает обработчик вторым по счёту, а <span class="SourceText">handle</span> — первым. Таким образом, <span class="SourceText">catch</span> читабельнее в инфиксной форме, а <span class="SourceText">handle</span> — в простой. Так что выбирайте на вкус.</p>
+    <h3 id="toc122" class="calibre22">Пытаемся</h3>
+    <p class="calibre16">Функция <span class="SourceText">try</span> использует иной подход. Вот пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Control.Exception</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    result &lt;- <span>try</span> $ <span>readFile</span> path :: <span class="aaaa">IO</span> (<span class="aaaa">Either IOException String</span>)</p>
+    <p class="aa">    <span class="aaa">case</span> result <span class="aaa">of</span></p>
+    <p class="aa">        <span class="aaaa">Left</span> exception -&gt; <span>putStrLn</span> $ <span class="a1">"Fault: "</span> ++ <span>show</span> exception</p>
+    <p class="aa">        <span class="aaaa">Right</span> content -&gt; <span>putStrLn</span> content</p>
+    <p class="aa">    <span class="aaa">where</span> path = <span class="a1">"Users/dshevchenko/test.c"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Разберём по полочкам.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Объявление функции <span class="SourceText">try</span> выглядит так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>try</span> :: <span class="aaaa">Exception</span> e =&gt; <span class="aaaa">IO</span> a -&gt; <span class="aaaa">IO</span> (<span class="aaaa">Either</span> e a)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция принимает наше <span class="SourceText">IO</span>-действие, а возвращает другое <span class="SourceText">IO</span>-действие, которое в свою очередь возвращает значение стандартного типа <span class="SourceText">Either e a</span>. <span class="SourceText">Either</span> — это конструктор типа, предназначенный для хранения одного из двух значений, каждое из которых соответствует хорошему результату или плохому. Обратите внимание, мы явно указали тип значения, возвращённого функцией <span class="SourceText">try</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>try</span> $ <span>readFile</span> path :: <span class="aaaa">IO</span> (<span class="aaaa">Either IOException String</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы сказали: «Пусть действие, возвращённое функцией <span class="SourceText">try</span>, вернёт нам значение типа <span class="SourceText">Either IOException String</span>, в котором будет лежать либо значение типа <span class="SourceText">IOException</span> (в случае, если при чтении файла что-то случилось), либо значение типа <span class="SourceText">String</span> с содержимым файла.»</p>
+    <p class="calibre16">Далее смотрим, получилось ли у нас:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">case</span> result <span class="aaa">of</span></p>
+    <p class="aa">    <span class="aaaa">Left</span> exception -&gt; <span>putStrLn</span> $ <span class="a1">"Fault: "</span> ++ <span>show</span> exception</p>
+    <p class="aa">    <span class="aaaa">Right</span> content -&gt; <span>putStrLn</span> content</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип <span class="SourceText">Either</span> имеет два конструктора, <span class="SourceText">Left</span> и <span class="SourceText">Right</span>. В нашем случае это можно изобразить так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">Either IOException String</p>
+    <p class="aa">       |           |</p>
+    <p class="aa">       Left        Right</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Используя эти два конструктора, мы можем понять, что же произошло. Конструкция <span class="SourceText">case-of</span> поможет нам сделать это. Мы говорим: «Если <span class="SourceText">result</span> соответствует левому значению — это значение типа <span class="SourceText">IOException</span>. Что-то пошло не так, выводим исключение на экран! Ну а если <span class="SourceText">result</span> соответствует правому значению — перед нами <span class="SourceText">String</span>. Всё прошло успешно, выводим на экран содержимое прочитанного файла.»</p>
+    <h3 id="toc123" class="calibre22">В чистом мире</h3>
+    <p class="calibre16">Иногда нам нужно поймать исключение, брошенное из чистой функции. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Control.Exception</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    result &lt;- <span>try</span> $ 2 <span>`div`</span> 0 :: <span class="aaaa">IO</span> (<span class="aaaa">Either SomeException Integer</span>)</p>
+    <p class="aa">    <span class="aaa">case</span> result <span class="aaa">of</span></p>
+    <p class="aa">        <span class="aaaa">Left</span> exception -&gt; <span>putStrLn</span> $ <span class="a1">"Fault: "</span> ++ <span>show</span> exception</p>
+    <p class="aa">        <span class="aaaa">Right</span> value -&gt; <span>print</span> value</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы попытались проверить результат деления числа <span class="SourceText">2</span> на ноль. К сожалению, этот код не пройдёт компиляцию. Ведь функция <span class="SourceText">try</span> ожидает на вход <span class="SourceText">IO</span>-действие, однако стандартная функция <span class="SourceText">div</span> чиста и возвращает обыкновенное число. Следовательно, нам нужен маленький трюк:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Control.Exception</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    result &lt;- <span>try</span> $ <span>evaluate</span> $ 2 <span>`div`</span> 0 </p>
+    <p class="aa">                    :: <span class="aaaa">IO</span> (<span class="aaaa">Either SomeException Integer</span>)</p>
+    <p class="aa">    <span class="aaa">case</span> result <span class="aaa">of</span></p>
+    <p class="aa">        <span class="aaaa">Left</span> exception -&gt; <span>putStrLn</span> $ <span class="a1">"Fault: "</span> ++ <span>show</span> exception</p>
+    <p class="aa">        <span class="aaaa">Right</span> value -&gt; <span>print</span> value</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы обернули вызов функции <span class="SourceText">div</span> в функцию <span class="SourceText">evaluate</span>. Теперь всё скомпилируется, и при запуске мы получим ожидаемое нами гневное сообщение:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Fault: divide by zero</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">evaluate</span> объявлена так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>evaluate</span> :: a -&gt; <span class="aaaa">IO</span> a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция играет роль адаптера: она как бы превращает результат в <span class="SourceText">IO</span>-действие, возвращающее этот результат. И после того, как функция <span class="SourceText">div</span> вернула нам обыкновенное число, функция <span class="SourceText">evaluate</span> обернула это число в действие, ожидаемое функцией <span class="SourceText">try</span>.</p>
+    <p class="calibre16">Почти готово. Но наше рассмотрение исключений не было бы полным без изучения наших собственных исключений.</p>
+    </body>
+</html>

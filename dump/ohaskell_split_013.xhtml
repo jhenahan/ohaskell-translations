@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc25" class="calibre8">Три кита типизации</h2>
+    <p class="calibre16">К типам у Haskell отношение очень серьёзное. Его система типов зиждется на трёх китах:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">статическая проверка,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">строгость,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">автоматическое выведение.</p>
+      </li>
+    </ol>
+    <h3 id="toc26" class="calibre22">Кит первый</h3>
+    <p class="calibre16">Статическая проверка типов — это проверка типа каждого выражения, выполняемая на стадии компиляции. И если компилятору что-то не понравится в типе какого-либо выражения, компиляция будет прервана с ошибкой.</p>
+    <p class="calibre16">Соответственно, если компиляция кода на Haskell прошла успешно, мы можем утверждать, что с типами у нас всё в порядке, потому что у нас есть второй кит.</p>
+    <h3 id="toc27" class="calibre22">Кит второй</h3>
+    <p class="calibre16">Строгость типов — это требование соответствия того, что мы ожидаем, тому, что мы получаем.</p>
+    <p class="calibre16">Например, в языке C мы можем написать такую функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">int</span> <span>coefficient</span>() {</p>
+    <p class="aa">    <span class="aaa">return</span> 12.9;</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это пример неявного приведения типов. Мы ожидаем значение типа <span class="SourceText">int</span>, но фактически получаем значение типа <span class="SourceText">double</span>. Однако компилятор языка C спокойно проглотит это, при этом аккуратно отбросив дробную часть возвращаемого значения, ведь тип этого значения будет незримо приведён к <span class="SourceText">int</span>.</p>
+    <p class="calibre16">В Haskell подобный код не имеет ни малейших шансов пройти компиляцию, потому что в этом языке не существует неявного приведения типов: если мы ожидаем целое число — будь добр предоставить именно целое число.</p>
+    <p class="calibre16">Впрочем, явное приведение типов в Haskell тоже очень ограничено. В том же C++ мы можем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">int</span> <span>main</span>() {</p>
+    <p class="aa">    std::cout &lt;&lt; (<span class="aaaa">int</span>)<span class="a1">'1'</span> &lt;&lt; std::endl;</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Взяли значение типа <span class="SourceText">char</span> — и грубо переделали его в значение типа <span class="SourceText">int</span>. Компилятор — молчок. Последствия такого рода ошибок уже стали притчею во языцех...</p>
+    <p class="calibre16">В Haskell мы <span class="calibre18">можем</span> явно указать тип некоторого значения, но только если этот тип ассоциативен со значением. То есть если это число <span class="SourceText">1</span>, мы можем явно указать лишь «числовой» тип (такой, как <span class="SourceText">Integer</span> или <span class="SourceText">Double</span>). А вот фокусы с приведением символа к целочисленному значению, как это было продемонстрировано выше, в Haskell невозможны.</p>
+    <h3 id="toc28" class="calibre22">Кит третий</h3>
+    <p class="calibre16">Автоматическое выведение типов — это способность компилятора понять тип выражения по самому этому выражению.</p>
+    <p class="calibre16">Например, в языке C мы обязаны указывать тип явно:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">double</span> i = 10.34;</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В Haskell этого делать не нужно. Мы просто пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">i = 10.34</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Компилятор проанализирует значение <span class="SourceText">10.34</span> и сам поймёт, что тип <span class="SourceText">i</span> — это <span class="SourceText">Double</span>. Впрочем, как уже было сказано, мы можем указать тип выражения явно (а иногда <span class="calibre18">должны</span> это сделать). Вскоре я продемонстрирую это.</p>
+    </body>
+</html>

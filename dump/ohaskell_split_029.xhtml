@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc85" class="calibre8">Контекст типа</h2>
+    <p class="calibre16">Как вы уже знаете, тип аргумента функции может быть полиморфным, что позволит нам применить такую функцию к значению любого типа. Но на практике нам редко нужна столь радикальная гибкость, ведь в большинстве случаев, говоря об аргументе любого типа, мы подразумеваем вовсе не <span class="calibre18">любой</span> тип, а тип из некоторой группы. Об этом и поговорим.</p>
+    <h3 id="toc86" class="calibre22">Любой, да не совсем</h3>
+    <p class="calibre16">Рассмотрим стандартную функцию <span class="SourceText">elem</span>. Это простой предикат, возвращающий <span class="SourceText">True</span> в том случае, если заданное значение является элементом списка. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa"><span>    print</span> $ <span class="aaa">if</span> <span class="a1">"yellow"</span> <span>`elem`</span> colors </p>
+    <p class="aa">            <span class="aaa">then</span> <span class="a1">"Yello is here!" </span></p>
+    <p class="aa">            <span class="aaa">else</span> <span class="a1">"There's no yellow..."</span></p>
+    <p class="aa">    <span class="aaa">where</span> colors = [<span class="a1">"red"</span>, </p>
+    <p class="aa">                    <span class="a1">"black"</span>,</p>
+    <p class="aa">                    <span class="a1">"yellow"</span>,</p>
+    <p class="aa">                    <span class="a1">"green"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Предельно простая функция. Взглянем на её объявление:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>elem</span> :: <span class="aaaa">Eq</span> a =&gt; a -&gt; [a] -&gt; <span class="aaaa">Bool</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тут вроде бы всё понятно: принимаем значение некоторого типа <span class="SourceText">a</span>, а также список из значений этого же типа, и возвращаем логический признак. </p>
+    <p class="calibre16">И всё-таки кое-что новенькое тут присутствует, а именно символ <span class="SourceText">=&gt;</span>. Этот символ и говорит нам о наличии контекста типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Eq</span> a =&gt; a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Слева от символа <span class="SourceText">=&gt;</span> находится ограничение, наложенное на полиморфный тип <span class="SourceText">a</span>. Мы говорим: «Да, мы готовы принять аргумент любого типа, но при условии, что этот тип относится к классу типов <span class="SourceText">Eq</span>.»</p>
+    <p class="calibre16">Стандартный класс типов <span class="SourceText">Eq</span> (от английского equal, «равный») предоставляет два метода:</p>
+    <p class="aa">(==) :: a -&gt; a -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa">(/=) :: a -&gt; a -&gt; <span class="aaaa">Bool</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Именно поэтому функция <span class="SourceText">elem</span> может быть применена лишь к значению  такого типа, который предоставляет свои реализации методов «равно» <span class="SourceText">(==)</span> и «не равно» <span class="SourceText">(/=)</span>. Оно и понятно: далеко не для всех типов операция проверки на равенство имеет смысл.</p>
+    <p class="calibre16">Проверим это на нашем типе <span class="SourceText">IPAddress</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>nothing</span> :: a -&gt; a</p>
+    <p class="aa"><span>nothing</span> val = val</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>nothing</span> $ <span class="aaaa">IP</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">У нас есть функция <span class="SourceText">nothing</span>, которая ничего не делает, просто возвращает свой аргумент. Поскольку она объявлена с полиморфным типом без каких-либо ограничений, мы можем применить эту функцию даже к значению нашего типа <span class="SourceText">IPAddress</span>.</p>
+    <p class="calibre16">Но как только мы добавим в объявление этой функции ограничение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>nothing</span> :: <span class="aaaa">Eq</span> a =&gt; a -&gt; a</p>
+    <p class="aa"><span>nothing</span> value = value</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">функция <span class="SourceText">nothing</span> уже не согласится работать с нашим типом, и правильно сделает: наш тип не имеет никакого отношения к классу <span class="SourceText">Eq</span>. В этом случае говорят, что тип <span class="SourceText">IPAddress</span> не подходит под ограничение класса <span class="SourceText">Eq</span>, или не входит в контекст класса <span class="SourceText">Eq</span>.</p>
+    <p class="calibre16">Механизм ограничения класса типа — полезный механизм, к тому же делающий наш код самодокументируемым, ведь видя ограничение типа в объявлении функции, мы сразу же понимаем, каким характеристикам должен соответствовать тип аргумента.</p>
+    <h3 id="toc87" class="calibre22">Множественность</h3>
+    <p class="calibre16">Контекстов может быть и несколько. В этом случае мы перечисляем требуемые классы типов в виде кортежа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>nothing</span> :: (<span class="aaaa">Show</span> a, <span class="aaaa">Eq</span> a) =&gt; a -&gt; a</p>
+    <p class="aa"><span>nothing</span> value = value</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы требуем, чтобы тип аргумента входил как в контекст класса <span class="SourceText">Show</span>, так и в контекст класса <span class="SourceText">Eq</span>.</p>
+    <p class="calibre16">Более того, мы можем указать разные ограничения для разных полиморфных типов. Если бы наша функция <span class="SourceText">nothing</span> принимала два аргумента, её объявление могло быть таким:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>nothing</span> :: (<span class="aaaa">Show</span> a, <span class="aaaa">Show</span> b, <span class="aaaa">Eq</span> b) =&gt; a -&gt; b -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>nothing</span> value1 value2 = <span>show</span> value1 ++ <span>show</span> value2</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип первого аргумента должен входит в контекст класса <span class="SourceText">Show</span>, в то время как тип второго должен входить в контексты сразу двух классов, <span class="SourceText">Show</span> и <span class="SourceText">Eq</span>.</p>
+    <p class="calibre16">Готово. Теперь вы знаете о контексте типов. Однако чуть позже вы узнаете о нём кое-что ещё.</p>
+    </body>
+</html>

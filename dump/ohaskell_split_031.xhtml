@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc93" class="calibre8">Наследуемые типы</h2>
+    <p class="calibre16">Как вы помните, вывести на экран значение нашего типа <span class="SourceText">IPAddress</span> мы смогли лишь после того, как определили собственный экземпляр класса типов <span class="SourceText">Show</span>. Однако существует ещё один способ обеспечить «печатаемость» нашего <span class="SourceText">IPAddress</span>.</p>
+    <h3 id="toc94" class="calibre22">Наследуем</h3>
+    <p class="calibre16">На сцену выходит ключевое слово <span class="SourceText">deriving</span>. Перепишем определение нашего типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="aa">                 <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Всё. Мы можем сразу напечатать наше значение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaaa">IP</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">IP "127.0.0.1"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово. Никаких экземпляров. Мы просто определили наш тип как <span class="calibre17">наследуемый</span><span class="calibre17"><span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn18" id="bodyftn18" class="pcalibre pcalibre1">18</a></span></span> от класса <span class="SourceText">Show</span>. Именно поэтому нам не нужно определять собственную версию метода <span class="SourceText">show</span>, ведь компилятор уже сделал это за нас.</p>
+    <p class="calibre16">Вас, вероятно, интересует, откуда компилятор знает, <span class="calibre18">как</span> нужно выводить на экран значение нашего типа? А он этого и не знает, поэтому идёт по пути наименьшего сопротивления. Обратите внимание на вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">IP "127.0.0.1"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Фактически, наш объект явно «стрингифицировался» в том же виде, в каком и был создан.</p>
+    <p class="calibre16">Вспомним наш составной тип и сделаем его «печатаемым»:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName</p>
+    <p class="aa">                 , lastName</p>
+    <p class="aa">                 , email</p>
+    <p class="aa">                 , yearOfBirth :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , account</p>
+    <p class="aa">                 , uid :: <span class="aaaa">Integer</span></p>
+    <p class="aa">                 } <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> user</p>
+    <p class="aa">    <span class="aaa">where</span> user = <span class="aaaa">User</span> { firstName = <span class="a1">"Denis"</span></p>
+    <p class="aa">                      , lastName = <span class="a1">"Shevchenko" </span></p>
+    <p class="aa">                      , email = <span class="a1">"me@dshevchenko.biz"</span></p>
+    <p class="aa">                      , yearOfBirth = <span class="a1">"1981"</span></p>
+    <p class="aa">                      , account = 1234567890</p>
+    <p class="aa">                      , uid = 123</p>
+    <p class="aa">                      }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">User {firstName = "Denis", lastName = "Shevchenko", email = "me@dshevchenko.biz", yearOfBirth = "1981", account = 1234567890, uid = 123}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Прямая «стрингификация», как создали — так и получили.</p>
+    <p class="calibre16">Кстати, наследоваться можно только от нескольких классов. В соответствии со стандартом Haskell 2010 к таковым относятся: <span class="SourceText">Eq</span>, <span class="SourceText">Ord</span>, <span class="SourceText">Enum</span>, <span class="SourceText">Bounded</span>, <span class="SourceText">Read</span> и <span class="SourceText">Show</span><span class="calibre1">.</span><span class="SourceText"><span class="calibre26"> </span></span><span class="calibre1">Ра</span>ссмотрим, что сделает с нашим типом наследование от этих классов.</p>
+    <h3 id="toc95" class="calibre22"><span class="calibre28">Eq</span> и <span class="calibre28">Ord</span></h3>
+    <p class="calibre16">Наследование от этих двух классов позволит нам сравнивать объекты нашего типа на (не)равенство, а также по признаку больше/меньше. То есть к объекту нашего типа можно будет применять следующие стандартные функции: <span class="SourceText">(==)</span>, <span class="SourceText">(/=)</span>, <span class="SourceText">compare</span>, <span class="SourceText">(&lt;)</span>, <span class="SourceText">(&lt;=)</span>, <span class="SourceText">(&gt;)</span>, <span class="SourceText">(&gt;=)</span>, <span class="SourceText">max</span>, <span class="SourceText">min</span>.</p>
+    <p class="calibre16">Эти классы — братья-близнецы: если наследуетесь от одного, то скорее всего нужно и от второго. Да, я ведь не сказал: вы можете наследоваться от нескольких классов одновременно. В этом случае они перечисляются в виде кортежа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String </span></p>
+    <p class="aa">                 <span class="aaa">deriving</span> (<span class="aaaa">Eq</span>, <span class="aaaa">Ord</span>)</p>
+    <h3 id="toc96" class="calibre22">Enum</h3>
+    <p class="calibre16">Наследование от <span class="SourceText">Enum</span> сделает объекты нашего типа перечисляемыми. Однако этот тип должен иметь только нульарные конструкторы.</p>
+    <p class="calibre16">Вспомним наш "протокольный" тип и описательную функцию к нему:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">TransportLayer</span> = <span class="aaaa">TCP</span> | <span class="aaaa">UDP</span> | <span class="aaaa">SCTP</span> | <span class="aaaa">DCCP</span> | <span class="aaaa">SPX</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>descriptionOf</span> :: <span class="aaaa">TransportLayer</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>descriptionOf</span> protocol =</p>
+    <p class="aa">    <span class="aaa">case</span> protocol <span class="aaa">of</span> </p>
+    <p class="aa">        <span class="aaaa">TCP</span>  -&gt; <span class="a1">"Transmission Control Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">UDP</span>  -&gt; <span class="a1">"User Datagram Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">SCTP</span> -&gt; <span class="a1">"Stream Control Transmission Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">DCCP</span> -&gt; <span class="a1">"Datagram Congestion Control Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">SPX</span>  -&gt; <span class="a1">"Sequenced Packet Exchange"</span></p>
+    <p class="aa"> </p>
+    <p class="aa"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Поработаем со списком протоколов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>descriptionOf</span> protocol | protocol &lt;- [<span class="aaaa">TCP</span>, <span class="aaaa">UDP</span>]]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Transmission Control Protocol","User Datagram Protocol"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы использовали нашего старого друга, list comprehension, чтобы пройтись по всем элементам списка протоколов и вернуть список с соответствующими описаниями.</p>
+    <p class="calibre16">Но что мы будем делать, если захотим получить описание всех протоколов транспортного уровня? Нам придётся вручную указывать все пять. Ничего страшного в этом нет, однако если бы это были протоколы физического уровня, то их было бы уже порядка двадцати. Писать их вручную — скучно. Но есть у нас один инструмент, позволяющий создать список малыми усилиями. Речь идёт о диапазонах. Вот тут-то и выходит на сцену класс <span class="SourceText">Enum</span>.</p>
+    <p class="calibre16">Наследуем от него наш тип:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">TransportLayer</span> = <span class="aaaa">TCP</span> | <span class="aaaa">UDP</span> | <span class="aaaa">SCTP</span> | <span class="aaaa">DCCP</span> | <span class="aaaa">SPX</span></p>
+    <p class="aa">                      <span class="aaa">deriving</span> <span class="aaaa">Enum</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и теперь мы можем использовать его так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>descriptionOf</span> protocol | protocol &lt;- [<span class="aaaa">TCP</span> ..]]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы использовали бесконечный диапазон, указав лишь первый из протоколов. В результате наш список включит в себя все имеющиеся значения типа <span class="SourceText">TransportLayer</span>, и вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Transmission Control Protocol","User Datagram Protocol","Stream Control Transmission Protocol","Datagram Congestion Control Protocol","Sequenced Packet Exchange"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обращаю ваше внимание на маленькую деталь:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span class="aaaa">TCP</span> ..]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Видите пробел между именем протокола и двумя точками? Он обязателен. Если уберёте — компилятор выразит своё несогласие.</p>
+    <h3 id="toc97" class="calibre22">Bounded</h3>
+    <p class="calibre16">Когда мы наследуем наш тип от класса <span class="SourceText">Bounded</span>, мы получаем возможность применять к нашему типу две стандартные функции, <span class="SourceText">minBound</span> и <span class="SourceText">maxBound</span>. Обратите внимание: эти функции применяются именно к типу, а не к значению, и возвращают они минимальное и максимальное значение данного типа. </p>
+    <p class="calibre16">Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="a1">"minimal Int value: "</span> ++ <span>show</span> (<span>minBound</span> :: <span class="aaaa">Int</span>) ++ </p>
+    <p class="aa">               <span class="a1">", maximum Int value: "</span> ++ <span>show</span> (<span>maxBound</span> :: <span class="aaaa">Int</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"minimal Int value: -9223372036854775808, maximum Int value: 9223372036854775807"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы можем применять эти две функции и к нашим собственным типам. Сделаем же это с протоколами:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">TransportLayer</span> = <span class="aaaa">TCP</span> | <span class="aaaa">UDP</span> | <span class="aaaa">SCTP</span> | <span class="aaaa">DCCP</span> | <span class="aaaa">SPX</span></p>
+    <p class="aa">                      <span class="aaa">deriving</span> (<span class="aaaa">Show</span>, <span class="aaaa">Enum</span>, <span class="aaaa">Bounded</span>)</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="a1">"first protocol: "</span> ++ <span>show</span> (<span>minBound</span> :: <span class="aaaa">TransportLayer</span>) ++ </p>
+    <p class="aa">               <span class="a1">", last protocol: "</span> ++ <span>show</span> (<span>maxBound</span> :: <span class="aaaa">TransportLayer</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"first protocol: TCP, last protocol: SPX"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы применили эти функции к нашему перечисляемому типу, и они вернули, соответственно, "наименьшее" (первое по счёту) и "наибольшее" (последнее по счёту) значения этого типа.</p>
+    <h3 id="toc98" class="calibre22"><span class="calibre28">Read</span> и <span class="calibre28">Show</span></h3>
+    <p class="calibre16">Эти два класса наделяют значение нашего типа диаметрально противоположными способностями. <span class="SourceText">Show</span>, как вы уже знаете, позволяет представлять значение в виде строки, а <span class="SourceText">Read</span>, напротив, позволяет извлекать объект из строки. Ничего не напоминает? Ведь это сериализация. <span class="SourceText">Show</span> даёт возможность сериализовать объект в строку, а <span class="SourceText">Read</span> — десериализовать его из этой строки.</p>
+    <p class="calibre16">Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName</p>
+    <p class="aa">                 , lastName</p>
+    <p class="aa">                 , email</p>
+    <p class="aa">                 , yearOfBirth :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , account</p>
+    <p class="aa">                 , uid :: <span class="aaaa">Integer</span></p>
+    <p class="aa">                 } <span class="aaa">deriving</span> (<span class="aaaa">Show</span>, <span class="aaaa">Read</span>, <span class="aaaa">Eq</span>)</p>
+    <p class="aa"> </p>
+    <p class="aa">main =</p>
+    <p class="aa">    <span class="aaa">let</span> object = user</p>
+    <p class="aa">        serializedObject = <span>show</span> object</p>
+    <p class="aa">        deserializedObject = <span>read</span> serializedObject</p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    <span>print</span> $ object == deserializedObject <span class="aa1">-- Объекты равны? Не сомневайтесь!</span></p>
+    <p class="aa">    <span class="aaa">where</span> user = <span class="aaaa">User</span> { firstName = <span class="a1">"Denis"</span></p>
+    <p class="aa">                      , lastName = <span class="a1">"Shevchenko" </span></p>
+    <p class="aa">                      , email = <span class="a1">"me@dshevchenko.biz"</span></p>
+    <p class="aa">                      , yearOfBirth = <span class="a1">"1981"</span></p>
+    <p class="aa">                      , account = 1234567890</p>
+    <p class="aa">                      , uid = 123</p>
+    <p class="aa">                      }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь вы знаете, что такое <span class="SourceText">deriving</span>. Открою вам секрет: наследоваться можно не только от шести вышеперечисленных классов, но и от нескольких других. Однако это касается довольно-таки редких случаев, поэтому мы не будем их рассматривать.</p>
+    </body>
+</html>

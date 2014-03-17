@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc51" class="calibre8">Функциональные цепочки</h2>
+    <p class="calibre16">В отношении функций часто можно сказать: «Один в поле не воин». В этой главе мы рассмотрим два удобных способа организации взаимодействия функций.</p>
+    <h3 id="toc52" class="calibre22">Пример с URL</h3>
+    <p class="calibre16">Известно, что вид URL обязан соответствовать особым правилам<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn13" id="bodyftn13" class="pcalibre pcalibre1">13</a></span>. Но в реальной жизни это не всегда так, поэтому иногда URL нужно преобразовать к правильному виду. Вот как это может выглядеть:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.String.Utils</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>addPrefix</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>addPrefix</span> url =</p>
+    <p class="aa">    <span class="aaa">if</span> url <span>`startsWith`</span> prefix <span class="aaa">then</span> url <span class="aaa">else</span> prefix ++ url</p>
+    <p class="aa">    <span class="aaa">where</span> prefix = <span class="a1">"http://"</span></p>
+    <p class="aa"><span class="a1">          </span><span>startsWith</span><span class="a1"> </span>url prefix = <span>startswith</span><span class="a1"> </span>prefix url</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>encodeAllSpaces</span> = <span>replace</span> <span class="a1">" "</span> <span class="a1">"%20"  </span><span class="aa1">-- Заменяем все пробелы на %20.</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>makeItLowerCase</span> = <span>map</span> <span>toLower  </span><span class="aa1">-- Переводим символы строки в нижний регистр.</span><span>      </span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>putStrLn</span> (<span>addPrefix</span> (<span>encodeAllSpaces</span> (<span>makeItLowerCase</span> url)))</p>
+    <p class="aa">    <span class="aaa">where</span> url = <span class="a1">"www.SITE.com/test me/Start page"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">http://www.site.com/test%20me/start%20page</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы импортировали новый модуль <span class="SourceText">Data.String.Utils</span>. Этот модуль является частью пакета <span class="SourceText">MissingH</span>, содержащего кучу разных полезных утилит. Установим этот пакет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal install MissingH</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Упомянем его в <span class="SourceText">Real.cabal</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">build-depends: base ==4.6.*, MissingH</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В модуле <span class="SourceText">Data.String.Utils</span> присутствуют различные вкусности для работы со строками, но нам понадобилась лишь одна функция<span class="SourceText"><span class="calibre26"> </span></span><span class="SourceText">startswith</span>, проверяющая, является ли одна строка началом другой строки.</p>
+    <p class="calibre16">Но вы, вероятно, обратили внимание на две необычные строки:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>encodeAllSpaces</span> = <span>replace</span> <span class="a1">" "</span> <span class="a1">"%20"</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>makeItLowerCase</span> = <span>map</span> <span>toLower</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Что это? Вроде бы похоже на функцию, определённую без объявления, но где же тут аргумент? А он здесь не нужен. Чтобы стало понятнее, напишем с аргументом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeItLowerCase</span> url = <span>map</span> <span>toLower </span>url</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это — полная форма. Но мы можем сократить её, убрав аргумент. Почему? Потому что такой инструкцией:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeItLowerCase</span> = <span>map</span> <span>toLower</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">мы объявляем: «Всё, теперь <span class="SourceText">makeItLowerCase</span><span> </span>— это псевдоним для функциональной записи <span class="SourceText">map toLower</span>. Поэтому везде, где мы напишем <span class="SourceText">makeItLowerCase</span> <span class="SourceText">arg</span>, мы будем подразумевать <span class="SourceText">map toLower arg</span>.»</p>
+    <p class="calibre16">Итак, у нас имеются три функции, каждая из которых делает с нашим URL простую исправительную операцию: <span class="SourceText">makeItLowerCase</span> переводит все символы в нижний регистр, <span class="SourceText">encodeAllSpaces</span> заменяет пробелы строкой <span class="SourceText">%20</span>, <span class="SourceText">addPrefix</span> добавляет префикс, если таковой отсутствует. То есть у нас есть цепочка из трёх функций: на входе этой цепочки неправильный URL, а на выходе — исправленный URL. Рассмотрим эту цепочку поближе:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addPrefix</span> (<span>encodeAllSpaces</span> (<span>makeItLowerCase</span> url))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Сначала вызывается <span class="SourceText">makeItLowerCase</span>, потом <span class="SourceText">encodeAllSpaces</span>, потом <span class="SourceText">addPrefix</span>. Каждая из функций принимает на вход URL и возвращает обработанный ею URL, поступающий на вход следующей функции.</p>
+    <p class="calibre16">И всё бы хорошо, но есть в такой цепочке один минус — многовато круглых скобок<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn14" id="bodyftn14" class="pcalibre pcalibre1">14</a></span>. Проблема усугубилась бы, если бы функций-исправителей было не три, а больше. Существует два способа сделать такие цепочки красивее.</p>
+    <h3 id="toc53" class="calibre22">Функция композиции</h3>
+    <p class="calibre16">Функция композиции (function composition) выглядит как точка. Её назначение — компоновать функции в цепочку. Вот так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(<span>addPrefix</span> . <span>encodeAllSpaces</span> . <span>makeItLowerCase</span>) url</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция композиции берёт наши три функции и объединяет их в одну конструкцию, которая один раз применяется к нашему <span class="SourceText">url</span>, и результат будет точно таким же, как если бы мы написали так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addPrefix</span> (<span>encodeAllSpaces</span> (<span>makeItLowerCase</span> url))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Можно сказать, что функция композиции создала стек из трёх функций: перечислены они слева направо, а вызываться будут справа налево. Таким образом, строка <span class="SourceText">url</span> едет по конвейеру, заезжая в него с правого края и выезжая с левого.</p>
+    <h3 id="toc54" class="calibre22">Функция применения</h3>
+    <p class="calibre16">А ещё есть функция применения (function application), иногда говорят «функция аппликации». Выглядит она как значок доллара. Её назначение — компоновать функции в цепочку. Вот так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addPrefix</span> $ <span>encodeAllSpaces</span> $ <span>makeItLowerCase</span> url</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы обошлись вообще без скобок. И такое написание также аналогично исходному:</p>
+    <p class="aa"><span>addPrefix</span> (<span>encodeAllSpaces</span> (<span>makeItLowerCase</span> url))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь тоже получился стек из функций: перечислены слева направо, а вызываются справа налево. Такой вызов справа налево называют ещё правоассоциативным (right-associative).</p>
+    <h3 id="toc55" class="calibre22">Вместе</h3>
+    <p class="calibre16">Вероятно, вам интересно, а в чём же разница между этими двумя способами? Ведь и первый и второй предназначены для организации стековой цепочки функций.</p>
+    <p class="calibre16">Главная разница состоит в том, что функция применения позволяет объединять не только функции, но также функцию с её аргументом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="a1">"Hi master!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Долларовый оператор объединил значение и применяемую к этому значению функцию. А вот функция композиции не позволит проделать такой фокус.</p>
+    <p class="calibre16">Вы спросите, зачем это нужно? Отвечаю:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> (<span class="a1">"Hi master '"</span> ++ name ++ <span class="a1">"', have a nice day!"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">print</span> готова работать исключительно с одним аргументом, поэтому три литерала, объединяющиеся в один, необходимо взять в скобки. Значительно удобнее написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="a1">"Hi master '"</span> ++ name ++ <span class="a1">"', have a nice day!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы избавились от скобок, объединив функцию и её аргумент в маленькую цепочку. Именно благодаря такому свойству функции композиции и применения часто используют вместе:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addPrefix</span> . <span>encodeAllSpaces</span> . <span>makeItLowerCase</span> $ url</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Точка объединяет функции, а доллар привязывает их к аргументу.</p>
+    <p class="calibre16">Всё, теперь вы знаете о функциональных цепочках.</p>
+    </body>
+</html>

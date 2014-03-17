@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc171" class="calibre8">Рекурсивные функции</h2>
+    <p class="calibre16">В языке Haskell нет циклических конструкций. Никаких <span class="SourceText">for</span>, никаких <span class="SourceText">while</span>. Единственный способ явно организовать цикл — рекурсивные функции.</p>
+    <p class="calibre16">Вы спросите, почему о них не было рассказано раньше, в разделе о функциях? Да потому что в реальных проектах вам редко придётся иметь дело с рекурсивными функциями, ведь почти все повторяющиеся действия вы будете делать без них.</p>
+    <p class="calibre16">Например, самый распространённый случай циклического действия — итерирование всей последовательности элементов. На практике это будет проход некоторой функцией по всем элементам списка. Но вы уже знаете, что для этого есть функции <span class="SourceText">map</span>, <span class="SourceText">filter</span> и подобные им. А для итерирования последовательности с условием(ями) вы сможете использовать уже известные вам list comprehensions. А о таких простых вещах, как получение суммы или произведения элементов списка, и говорить нечего.</p>
+    <p class="calibre16">Иными словами, в большинстве случаев вы и не вспомните о рекурсивных функциях. И всё-таки знать о них полезно, тем более что в некоторых случаях они вам понадобятся.</p>
+    <h3 id="toc172" class="calibre22">Сама себя</h3>
+    <p class="calibre16">Рекурсивной называется функция, в теле которой присутствует вызов её самой. Конечно, мы будем говорить только о простой рекурсии<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn25" id="bodyftn25" class="pcalibre pcalibre1">26</a></span>, косвенную же рекурсию<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn26" id="bodyftn26" class="pcalibre pcalibre1">27</a></span> мы рассматривать не будем.</p>
+    <p class="calibre16">Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> :: a -&gt; <span class="aaaa">Int</span> -&gt; [a]  </p>
+    <p class="aa"><span>makeListFrom</span> value howMany = </p>
+    <p class="aa">    <span class="aaa">if</span> howMany &gt; 0 </p>
+    <p class="aa">    <span class="aaa">then</span> value : <span>makeListFrom</span> value (howMany - 1)</p>
+    <p class="aa">    <span class="aaa">else</span> []</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция строит список, элементами которого будут значения <span class="SourceText">value</span>,  количество же элементов будет равным <span class="SourceText">howMany</span>. И если мы вызовем её так:</p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>makeListFrom</span> 2 3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">на выходе получим список из трёх двоек:</p>
+    <p class="calibre16"> </p>
+    <p class="a">[2,2,2]</p>
+    <h3 id="toc173" class="calibre22">Основное правило</h3>
+    <p class="calibre16">Всё, что имеет начало, имеет и конец. Когда рекурсия запущена, нам нужен способ остановить её. Поэтому тело рекурсивной функции должно содержать не только зацикливающий код, но и код, обеспечивающий выход из этого цикла.</p>
+    <p class="calibre16">Рассмотрим тело нашей функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">if</span> howMany &gt; 0 </p>
+    <p class="aa"><span class="aaa">then</span> value : <span>makeListFrom</span> value (howMany - 1)  <span class="aa1">-- Запускаю цикл.</span></p>
+    <p class="aa"><span class="aaa">else</span> []                                        <span class="aa1">-- Останавливаю цикл.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами условие, приводящее нас в одну из логических ветвей. Первая ветвь запускает цикл, вторая ветвь останавливает его. Рассмотрим совместную работу этих двух ветвей.</p>
+    <h3 id="toc174" class="calibre22">Погружаемся</h3>
+    <p class="calibre16">Разберём вызов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В самом начале мы заходим в эту функцию с аргументами <span class="SourceText">2</span> и <span class="SourceText">3</span>. Следовательно, на этом шаге внутренности данной функции вот такие:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3 = </p>
+    <p class="aa">    <span class="aaa">if</span> 3 &gt; 0 </p>
+    <p class="aa">    <span class="aaa">then</span> 2 : <span>makeListFrom</span> 2 (3 - 1)</p>
+    <p class="aa">    <span class="aaa">else</span> []</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Поскольку условие <span class="SourceText">3 &gt; 0</span> выполняется, мы попадаем в первую логическую ветвь:</p>
+    <p class="aa">2 : <span>makeListFrom</span> 2 (3 - 1)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь используется оператор <span class="SourceText">':'</span>, добавляющий левый операнд в начало списка, выступающего правым операндом. То есть мы хотим добавить значение <span class="SourceText">2</span> в начало списка, порождённого правым выражением. Но этим правым выражением идёт повторный вызов нашей функции. Следовательно, запускается цикл, и мы погружаемся.</p>
+    <p class="calibre16">Взглянем на внутренности нашей функции во время второго вызова:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 2 = </p>
+    <p class="aa">    if 2 &gt; 0 </p>
+    <p class="aa">    then 2 : <span>makeListFrom</span> 2 (2 - 1)</p>
+    <p class="aa">    else []</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Условие <span class="SourceText">2 &gt; 0</span> опять выполняется, значит, мы опять попадаем в первую логическую ветвь:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">2 : <span>makeListFrom</span> 2 (2 - 1)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы только собрались добавить значение <span class="SourceText">2</span> в начало списка, порождённого правым выражением — и тут опять входим в очередной вызов нашей функции. Её внутренности такие:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 1 = </p>
+    <p class="aa">    if 1 &gt; 0 </p>
+    <p class="aa">    then 2 : <span>makeListFrom</span> 2 (1 - 1)</p>
+    <p class="aa">    else []</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И снова условие <span class="SourceText">1 &gt; 0</span> выполняется, поэтому мы опять входим в первую ветвь:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">2 : makeListFrom 2 (1 - 1)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И снова мы, желая добавить значение <span class="SourceText">2</span> в начало списка, порождённого правым выражением, погружаемся в очередной вызов нашей функции. Вот что внутри:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 0 = </p>
+    <p class="aa">    if 0 &gt; 0 </p>
+    <p class="aa">    then 2 : <span>makeListFrom</span> 2 (0 - 1)</p>
+    <p class="aa">    else []</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Условие <span class="SourceText">0 &gt; 0</span> уже не выполнится, поэтому мы окажемся во второй логической ветви. А в ней — пустой список. Всё, мы дошли до дна, наша рекурсия остановилась.</p>
+    <h3 id="toc175" class="calibre22">Всплываем</h3>
+    <p class="calibre16">Теперь начинается «обратная логическая раскрутка» наших вложенных вызовов. Именно в процессе это обратной раскрутки и происходит вся работа, ведь до тех пор, пока мы не дошли до «рекурсивного дна», никакой работы мы ещё не сделали. Мы каждый раз собирались добавить значение в начало списка — и тут же погружались в очередной вызов. Поэтому формирование готового списка начинается с того самого пустого списка, который был возвращён последним вызовом нашей функции.</p>
+    <p class="calibre16">Схематично наше всплытие можно изобразить так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3                  <span class="aa1">-- Зашли в функцию впервые.</span></p>
+    <p class="aa">    2 : <span>makeListFrom</span> 2 2          <span class="aa1">-- Первый рекурсивный вызов.</span></p>
+    <p class="aa">        2 : <span>makeListFrom</span> 2 1      <span class="aa1">-- Второй рекурсивный вызов.</span></p>
+    <p class="aa">            2 : <span>makeListFrom</span> 2 0  <span class="aa1">-- Третий рекурсивный вызов.</span></p>
+    <p class="aa">                []                <span class="aa1">-- Последний рекурсивный вызов.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Четвёртый вызов вернул пустой список, поэтому всплытие приобрело следующий вид:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3  </p>
+    <p class="aa">    2 : <span>makeListFrom</span> 2 2      <span class="aa1">-- Первый рекурсивный вызов.</span></p>
+    <p class="aa">        2 : <span>makeListFrom</span> 2 1  <span class="aa1">-- Второй рекурсивный вызов.</span></p>
+    <p class="aa">            2 : []            <span class="aa1">-- Третий рекурсивный вызов.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Наша функция на третьем рекурсивном вызове получила пустой список и добавила в его начало значение <span class="SourceText">2</span>, в результате чего появится список с одним значением.</p>
+    <p class="calibre16">Далее будет так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3  </p>
+    <p class="aa">    2 : <span>makeListFrom</span> 2 2  <span class="aa1">-- Первый рекурсивный вызов.</span></p>
+    <p class="aa">        2 : [2]           <span class="aa1">-- Второй рекурсивный вызов.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На втором рекурсивном вызове функция получила список, состоящий из одного значения, и добавила в его начало значение <span class="SourceText">2</span>, в результате чего появился список уже с двумя значениями.</p>
+    <p class="calibre16">Следующая ступень:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3  </p>
+    <p class="aa">    2 : [2,2]  <span class="aa1">-- Первый рекурсивный вызов.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На первом рекурсивном вызове мы получаем уже список, состоящий из двух значений, и опять добавляем в его начало значение <span class="SourceText">2</span>.</p>
+    <p class="calibre16">Таким образом, завершив наше всплытие с «рекурсивного дна», в месте вызова нашей функции</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>makeListFrom</span> 2 3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">мы получим наш итоговый список:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[2,2,2]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Всё. Теперь вы знаете о рекурсивных функциях. Конечно, рекурсия немного выворачивает мозг программисту, привыкшему к <span class="SourceText">for</span>, но, как заметил один из корифеев программирования Laurence Peter Deutsch, «итерация свойственна человеку, а рекурсия божественна.»</p>
+    </body>
+</html>

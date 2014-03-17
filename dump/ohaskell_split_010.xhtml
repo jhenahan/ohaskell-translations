@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc17" class="calibre8">О Hackage</h2>
+    <p class="calibre16">Если вы работали с Linux, вам знакомо понятие «репозиторий»: эдакое централизованное место, откуда можно взять много разных вкусностей. Так вот Hackage — это главный репозиторий в мире Haskell.</p>
+    <p class="calibre16">Название происходит от слияния слов <span class="calibre21">H</span>askell и <span class="calibre23">p</span><span class="calibre21">ackage</span>. Существует он с 2008 года, и представляет собой большую-пребольшую кучу пакетов. Воспринимайте пакет как библиотеку, однако в мире Haskell закрепилось понятие «пакет» (package).</p>
+    <p class="calibre16">Среди этой кучи вы найдёте очень много готовых решений, как для стандартных задач, так и для узкоспециализированных.</p>
+    <p class="calibre16">Чтобы воспользоваться пакетом, нам необходимо сделать четыре шага:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">найти этот пакет,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">установить его,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">добавить его в наш проект,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">импортировать из него нужные нам модули.</p>
+      </li>
+    </ol>
+    <h3 id="toc18" class="calibre22">Ищем</h3>
+    <p class="calibre16">Рекомендую искать пакеты здесь:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">Hoogle<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn9" id="bodyftn9" class="pcalibre pcalibre1">9</a></span></p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Hayoo!<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn10" id="bodyftn10" class="pcalibre pcalibre1">10</a></span></p>
+      </li>
+    </ol>
+    <p class="calibre16">Вбиваем в строке поиска нужное вам название, или категорию, или некое ассоциативное слово — и получаем много интересных результатов.</p>
+    <p class="calibre16">Для примера установим пакет <span class="SourceText">text</span>, продвинутый пакет для работы с... текстом, очевидно.</p>
+    <h3 id="toc19" class="calibre22">Устанавливаем</h3>
+    <p class="calibre16">Существует инструмент для удобной установки пакетов из Hackage, и имя ему <span class="SourceText">cabal</span>. Да-да, та самая, уже знакомая нам утилита!</p>
+    <p class="calibre16">Переходим в корень нашего проекта и выполняем команду:</p>
+    <p class="a">$ cabal update</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Этой командной мы обновляем список всех доступных пакетов. Рекомендуется периодически выполнять эту команду, чтобы всегда быть «на острие» развития Hackage.</p>
+    <p class="calibre16">После обновления списка устанавливаем наш пакет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal install text</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Чуток терпения — и пакет установлен.</p>
+    <h3 id="toc20" class="calibre22">Добавляем в проект</h3>
+    <p class="calibre16">Открываем сборочный файл <span class="SourceText">Real.cabal</span> и прописываем в нём имя установленного пакета. Для этого находим параметр <span class="SourceText">build-depends</span> и через запятую дописываем имя пакета:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">build-depends:   base == 4.6.*, text</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И последний шаг.</p>
+    <h3 id="toc21" class="calibre22">Импортируем модули</h3>
+    <p class="calibre16">Пакет состоит из модулей (а модули, как вы уже знаете, это файлы исходного кода). В пакете <span class="SourceText">text</span> модулей весьма много, мы выберем самый первый по счёту, <span class="SourceText">Data.Text</span>. Открываем <span class="SourceText">Main.hs</span> и пишем в самом начале:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Text</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово. Теперь мы можем использовать разные вкусные вещи из этого модуля. А вот какие именно вещи и как их использовать — об этом вы узнаете в ближайшем будущем.</p>
+    <h3 id="toc22" class="calibre22">О прелюдии</h3>
+    <p class="calibre16">Есть один стандартный модуль, который по умолчанию импортируется во все ваши модули. Имя ему — <span class="SourceText">Prelude</span>. В нём содержатся самые базовые  Haskell-инструменты, многие из которых вы будете использовать постоянно.</p>
+    </body>
+</html>

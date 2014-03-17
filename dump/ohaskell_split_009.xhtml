@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc13" class="calibre8">О модулях, минимум</h2>
+    <p class="calibre16">Настоящие проекты никогда не состоят из одного-единственного файла. Пришла пора узнать о модулях.</p>
+    <p class="calibre16">Исходные файлы в Haskell-проекте — это и есть модули. Один файл — один модуль. Таким образом, в нашем проекте сейчас есть два модуля: <span class="SourceText">Main.hs</span> и <span class="SourceText">Helpers.hs</span>.</p>
+    <p class="calibre16">В Haskell нет заголовочных файлов. Каждый из модулей рассматривается как самостоятельная единица проекта, содержащая в себе разные интересные вещи. И чтобы воспользоваться этими интересными вещами, нужно один модуль импортировать в другой.</p>
+    <p class="calibre16">Откроем наш пустой файл <span class="SourceText">Helpers.hs</span> и напишем в нём:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> Helpers <span class="aaa">where</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>hello</span> user = <span class="a1">"Hi, "</span> ++ user</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Первой строкой мы объявили, что имя этого модуля — <span class="SourceText">Helpers</span>. Далее, после ключевого слова <span class="SourceText"><span class="calibre23">where</span></span>, мы наполнили модуль содержимым. Содержимое у нас предельно простое, но пока не спрашивайте меня, что такое <span class="SourceText">hello</span>. Скоро мы выясним это.</p>
+    <h3 id="toc14" class="calibre22">Импортируем</h3>
+    <p class="calibre16">Откроем файл <span class="SourceText">Main.hs</span> и чуток изменим его:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> Helpers</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> (<span>hello</span> <span class="a1">"denis"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы включили наш модуль <span class="SourceText">Helpers</span> с помощью директивы <span class="SourceText">import</span>. Теперь  можно воспользоваться содержимым этого модуля, а именно той самой штуковиной по имени <span class="SourceText">hello</span>.</p>
+    <h3 id="toc15" class="calibre22">Упоминаем</h3>
+    <p class="calibre16">Теперь упомянем модуль <span class="SourceText">Helpers</span> в сборочном файле <span class="SourceText">Real.cabal</span>. Открываем его и прописываем наш модуль:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">executable Real</p>
+    <p class="aa">    main-is:             Main.hs             </p>
+    <p class="aa">    other-modules:       Helpers</p>
+    <p class="aa">    build-depends:       base ==4.6.*</p>
+    <p class="aa">    hs-source-dirs:      src</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы раскомментировали строку <span class="SourceText">other-modules</span> и указали имя нашего модуля. Обращаю ваше внимание: указать нужно не имя файла, а имя модуля.</p>
+    <p class="calibre16">Но раз уж мы указали имя нашего модуля, необходимо указать и место, где его искать. Ведь он лежит не в каталоге <span class="SourceText">src</span>, а в подкаталоге <span class="SourceText">src/Utils</span>. Поэтому в сборочном файле ищем параметр <span class="SourceText">hs-source-dirs</span> и дописываем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">    hs-source-dirs:      src </p>
+    <p class="aa">                         src/Utils</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Сохраняем, собираем:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal build</p>
+    <p class="a">Building Real-0.1.0.0...</p>
+    <p class="a">Preprocessing executable 'Real' for Real-0.1.0.0...</p>
+    <p class="a">[1 of 2] Compiling Helpers          ( src/Utils/Helpers.hs, dist/build/Real/Real-tmp/Helpers.o )</p>
+    <p class="a">[2 of 2] Compiling Main             ( src/Main.hs, dist/build/Real/Real-tmp/Main.o )</p>
+    <p class="a">Linking dist/build/Real/Real ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Получилось — уже не один, а два модуля были скомпилированы. Теперь запускаем:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ ./dist/build/Real/Real</p>
+    <p class="a">Hi, denis</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Работает.</p>
+    <p class="aaa1"> </p>
+    <h3 id="toc16" class="calibre22">Об именах</h3>
+    <p class="calibre16">Здесь есть два правила.</p>
+    <p class="calibre16">Во-первых, имя модуля должно начинаться с большой буквы. В отношении имён подпапок внутри <span class="SourceText">src</span> принята та же практика.</p>
+    <p class="calibre16">Во-вторых, имя модуля должно совпадать с именем соответствующего ему файла. Именно поэтому файл, содержащий модуль <span class="SourceText">Helpers</span>, назван <span class="SourceText">Helpers.hs</span>.</p>
+    <p class="calibre16">Вот и всё. Теперь вы знаете, как организовать настоящий Haskell-проект. Позже я расскажу о модулях кое-что ещё, но на данный момент вам необходимо знать лишь это.</p>
+    </body>
+</html>

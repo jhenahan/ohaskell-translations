@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc162" class="calibre8">О модулях</h2>
+    <p class="calibre16">Как вы помните, в самом начале мы уже немного говорили о модулях. Пришло время изучить их более основательно.</p>
+    <h3 id="toc163" class="calibre22">Об иерархии</h3>
+    <p class="calibre16">Зайдём в каталог <span class="SourceText">src/Utils</span> и откроем файл <span class="SourceText">Helpers.hs</span>. Внесём в него следующие изменения:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Utils.Helpers</span> (</p>
+    <p class="aa">    calibrate,</p>
+    <p class="aa">    graduate</p>
+    <p class="aa">) <span class="aaa">where</span></p>
+    <p class="aa"> </p>
+    <p class="aa">coefficient :: <span class="aaaa">Double</span></p>
+    <p class="aa">coefficient = 0.99874</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>calibrate</span> length = length * coefficient</p>
+    <p class="aa"><span>graduate</span> length = length / coefficient</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Имя модуля уже не <span class="SourceText">Helpers</span>, а <span class="SourceText">Utils.Helpers</span>, то есть оно теперь отражает иерархию наших исходников. И хотя мы можем и не делать этого<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn24" id="bodyftn24" class="pcalibre pcalibre1">25</a></span>, но общая практика в мире Haskell именно такова: указывать имя модуля с полным путём к нему от корня. Именно поэтому все модули из Hackage, которые мы уже использовали, именовались полным путём:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.String.Utils</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь вы знаете, что такое длинное название — это всего лишь путь: в исходниках данного пакета есть каталог <span class="SourceText">Data</span>, в нём — каталог <span class="SourceText">String</span>, а уже в нём лежит модуль <span class="SourceText">Utils.hs</span>.</p>
+    <p class="calibre16">Кстати, не забудьте открыть ваш сборочный файл <span class="SourceText">Real.cabal</span> и внести изменения в параметр <span class="SourceText">other-modules</span>, а именно заменить <span class="SourceText">Helpers</span> на <span class="SourceText">Utils.Helpers</span>.</p>
+    <h3 id="toc164" class="calibre22">О лице</h3>
+    <p class="calibre16">У каждого модуля, помимо имени, есть и лицо. Лицо — это набор всего того, что может быть импортировано в другие модули. По умолчанию всё содержимое модуля является его лицом, то есть доступно всему миру. Однако в реальных модулях у вас, скорее всего, будут некоторые служебные функции и типы, которые вы не захотите показывать всему миру.</p>
+    <p class="calibre16">Взглянем ещё раз на модуль <span class="SourceText">Helpers.hs</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Utils.Helpers</span> (</p>
+    <p class="aa">    calibrate,</p>
+    <p class="aa">    graduate</p>
+    <p class="aa">) <span class="aaa">where</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Имена двух функций в круглых скобках — это и есть лицо нашего модуля, поэтому лишь эти две функции можно будет импортировать. Всё остальное, что есть в этом модуле, останется тайной за семью печатями. В частности, наше служебное значение <span class="SourceText">coefficient</span>: при попытке импортировать его в другой модуль компилятор удивлённо упрекнёт вас, мол, не знаю никакого <span class="SourceText">coefficient</span>. Но если оно окажется кому-то нужным — допишем его имя в круглых скобках:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Utils.Helpers</span> (</p>
+    <p class="aa">    calibrate,</p>
+    <p class="aa">    graduate,</p>
+    <p class="aa">    coefficient</p>
+    <p class="aa">) <span class="aaa">where</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и всё заработает. Теперь пропишем в лице модуля наш собственный тип:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Utils.Helpers</span> (</p>
+    <p class="aa">    calibrate,</p>
+    <p class="aa">    graduate,</p>
+    <p class="aa">    <span class="aaaa">Color </span>(<span class="aaaa">Red</span>, <span class="aaaa">Green</span>, <span class="aaaa">Blue</span>)</p>
+    <p class="aa">) <span class="aaa">where</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Color</span> = <span class="aaaa">Red</span> | <span class="aaaa">Green</span> | <span class="aaaa">Blue</span> <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обратите внимание: недостаточно прописать в лице модуля имя типа, необходимо также перечислить его конструкторы в виде кортежа. Впрочем, достаточно перечислить лишь те конструкторы, которые вы реально собираетесь использовать в других модулях для создания значений типа <span class="SourceText">Color</span>.</p>
+    <h3 id="toc165" class="calibre22">Ничего, кроме…</h3>
+    <p class="calibre16">В ряде случаев вам нельзя (или необязательно) импортировать всё то, что есть в модуле. Откроем <span class="SourceText">Main.hs</span> и напишем в нём:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Helpers</span> (calibrate)  <span class="aa1">-- Импортируем только calibrate.</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>calibrate</span> 12.4</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы импортировали лишь то, что перечислено в виде кортежа сразу за именем модуля. Всё остальное содержимое <span class="SourceText">Utils.Helpers</span> осталось невидимым.</p>
+    <p class="calibre16">Вы спросите, зачем это нужно? В конце концов, ну и пусть импортируется всё, а уж мы решим, что нам использовать.</p>
+    <p class="calibre16">Главная цель частичного импорта — исключение конфликта имён. В разных модулях зачастую присутствуют одноимённые сущности. В этом случае мы можем взять из «конфликтных» модулей только то, что нам необходимо.</p>
+    <h3 id="toc166" class="calibre22">Всё, кроме…</h3>
+    <p class="calibre16">Существует также противоположный подход, а именно частичный импорт всего содержимого модуля, кроме указанного. В этом случае нам понадобится ключевое слово <span class="SourceText">hiding</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Helpers</span> <span class="aaa">hiding</span> (graduate)  <span class="aa1">-- graduate скрыта...  </span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">После слова <span class="SourceText">hiding</span> перечислены в виде кортежа те сущности, которые будут недоступны (скрыты) в текущем модуле. Как вы уже догадались, такой подход так же используется во избежание конфликтов между одноимёнными сущностями из разных модулей.</p>
+    <h3 id="toc167" class="calibre22">Принадлежность</h3>
+    <p class="calibre16">В реальных проектах вы столкнётесь с ситуацией, когда вам очень нужно будет совместно использовать одноимённые функции из разных модулей. Просто так это сделать не получится, компилятор проявит принципиальность и потребует уточнений. В этом случае нам необходимо явно указать принадлежность функции к конкретному модулю:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Helpers</span></p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Math</span>  <span class="aa1">-- А вдруг здесь тоже есть функция calibrate?</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaaa">Utils.Helpers</span>.<span>calibrate</span> 12.4</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В этом случае конфликта не будет.</p>
+    <h3 id="toc168" class="calibre22">Короткая принадлежность</h3>
+    <p class="calibre16">В уже известном нам пакете <span class="SourceText">MissingH</span> есть модули с весьма длинным именем, например <span class="SourceText">System.Console.GetOpt.Utils</span>. Согласитесь, длинновато писать такой «префикс» всякий раз, когда нужно указать принадлежность. К счастью, есть способ ввести короткий псевдоним для модуля:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Helpers</span> <span class="aaa">as</span> <span class="aaaa">H</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaaa">H</span>.<span>graduate</span> 23</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ключевое слово <span class="SourceText">as</span> вводит короткое имя для <span class="SourceText">Utils.Helpers</span>. Кстати, на это имя действует общее для всех типов правило: только с большой буквы. Поэтому такой вариант не пройдёт:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Utils.Helpers</span> <span class="aaa">as</span> <span class="aaaa">h</span></p>
+    <h3 id="toc169" class="calibre22">Обязательная принадлежность</h3>
+    <p class="calibre16">В ряде случаев бывает полезным призвать пользователя к строгому порядку и обязать его указывать принадлежность сущностей к модулю. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaa">qualified</span> <span class="aaaa">Utils.Helpers</span> <span class="aaa">as</span> <span class="aaaa">H</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>graduate</span> 23</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы импортировали наш модуль с ключевым словом <span class="SourceText">qualified</span>. Именно поэтому такой код не пройдёт компиляцию. Слово <span class="SourceText">qualified</span> обязывает нас уточнять принадлежность всех используемых сущностей к соответствующим им модулям. Поэтому даже если функция <span class="SourceText">graduate</span> представлена в единственном экземпляре, при <span class="SourceText">qualified</span>-импорте мы должны явно указать, к какому модулю она принадлежит:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>print</span> $ <span class="aaaa">H</span>.<span>graduate</span> 23</p>
+    <h3 id="toc170" class="calibre22">О модуле <span class="calibre28">Main</span></h3>
+    <p class="calibre16">Если каждый наш модуль должен задаваться неким именем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Utils.Helpers</span> <span class="aaa">where</span> ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">почему же безымянным остался главный модуль <span class="SourceText">Main</span>? Пришло время узнать правду: этот модуль тоже нужно именовать. Прямо так и пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">module</span> <span class="aaaa">Main</span> <span class="aaa">where</span></p>
+    <p class="aa"> </p>
+    <p class="aa">...</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вы спросите, почему же мы не делали этого раньше? Дело в том, что компилятор <span class="SourceText">ghc</span> сам может понять, который из всего множества модулей есть модуль <span class="SourceText">Main</span>. Однако, в соответствии со стандартом Haskell 2010, правильнее будет указывать имя модуля <span class="SourceText">Main</span> явно. Я думаю, это логично, а то получается, что все модули названные, а самый главный модуль — безымянный.</p>
+    <p class="calibre16">Ну вот, теперь вы знаете о модулях всё.</p>
+    </body>
+</html>

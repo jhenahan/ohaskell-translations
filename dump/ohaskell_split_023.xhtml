@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc61" class="calibre8">Диапазоны</h2>
+    <p class="calibre16">Диапазон — это конструкция, автоматически создающая список по заданному признаку.</p>
+    <h3 id="toc62" class="calibre22">Суть</h3>
+    <p class="calibre16">Если нам нужно создать список целых чисел от 1 до 10, мы можем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">а можем просто задать диапазон:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[1..10]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово.</p>
+    <p class="calibre16">Разумеется, такой фокус можно проделать не только с числами. Например, вот так мы получим список всех букв английского алфавита в нижнем регистре:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span class="a1">'a'</span>..<span class="a1">'z'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе получим красивый список символов, или простую строку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"abcdefghijklmnopqrstuvwxyz"</p>
+    <h3 id="toc63" class="calibre22">Умные диапазоны</h3>
+    <p class="calibre16">Диапазоны можно задавать весьма гибко.</p>
+    <p class="calibre16">Вот так мы можем получить список всех чётных чисел от 2 до 30:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [2,4..30]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы задали шаг между значениями элементов, а остальные значения были созданы уже автоматически.</p>
+    <p class="calibre16">Можно и в порядке убывания:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [120,110..10]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе получим список с десятками:</p>
+    <p class="calibre16"> </p>
+    <p class="a">[120,110,100,90,80,70,60,50,40,30,20,10]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А вот чего компилятор не потерпит, так это излишних указаний с вашей стороны. Поэтому не пишите так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [2,4,6..30]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и так тоже не пишите:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [2,4..28,30]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Компилятор обидится на вас, ведь вы пытаетесь сказать ему то, что он и сам прекрасно понимает.</p>
+    <h3 id="toc64" class="calibre22">Без конца</h3>
+    <p class="calibre16">Как вы помните, ленивость языка Haskell позволяет нам оперировать бесконечными списками. И мы можем создать такой список через диапазон.</p>
+    <p class="calibre16">Например, вот такой диапазон:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[1..]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">создаст бесконечный список целых чисел, начиная с 1. Но, как вы уже знаете, в действительности созданный этим диапазоном список будет вовсе не бесконечным, а лишь <span class="calibre18">достаточно</span> большим:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>take</span> 5 [1..]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">[1,2,3,4,5]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы можем задать и шаг:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>take</span> 5 [2,4..]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В этом случае вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">[2,4,6,8,10]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот такие они, эти диапазоны.</p>
+    </body>
+</html>

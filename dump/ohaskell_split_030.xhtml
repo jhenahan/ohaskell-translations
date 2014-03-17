@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc88" class="calibre8">Составные типы</h2>
+    <p class="calibre16">вспомним наш демонстрационный тип <span class="SourceText">IPAddress</span>, который мы использовали до сих пор:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IPAddress String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Даже столь простой тип может быть весьма полезен в реальных проектах. И всё же очень часто нам нужны более сложные типы. О них и поговорим в этой главе.</p>
+    <h3 id="toc89" class="calibre22">Поля</h3>
+    <p class="calibre16">Определим тип <span class="SourceText">User</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , lastName :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , email :: <span class="aaaa">String</span></p>
+    <p class="aa">                 }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это уже значительно интереснее. Перед нами — классический составной тип. Он может выглядеть очень похожим на структуру в языке C, но на деле это не совсем так. Рассмотрим вот эту конструкцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">firstName :: <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами — поле. Впрочем, при кажущейся простоте, оно как шляпа фокусника, с двойным дном. С одной стороны, это значение типа <span class="SourceText">String</span>. С другой стороны — это (автоматически создаваемая компилятором) функция, позволяющая получить доступ к этому значению. Поэтому при создании значения типа <span class="SourceText">User</span> мы сначала инициализируем все три его поля, а потом сможем получить доступ к значениям этих полей. Вот так:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>firstName</span> user ++ <span class="a1">" "</span> ++</p>
+    <p class="aa">            <span>lastName</span> user ++ <span class="a1">", "</span> ++</p>
+    <p class="aa">            <span>email</span> user</p>
+    <p class="aa">    <span class="aaa">where</span> user = <span class="aaaa">User</span> { firstName = <span class="a1">"Denis"</span></p>
+    <p class="aa">                      , lastName = <span class="a1">"Shevchenko" </span></p>
+    <p class="aa">                      , email = <span class="a1">"me@dshevchenko.biz" </span></p>
+    <p class="aa">                      }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"Denis Shevchenko, me@dshevchenko.biz"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Применяя каждую из «полевых» функций к значению типа <span class="SourceText">User</span>, мы получаем доступ к соответствующему «полевому» содержимому, заданному при инициализации. Разумеется, все три значения константны.</p>
+    <h3 id="toc90" class="calibre22">Что с ними можно делать</h3>
+    <p class="calibre16">Как обычно: создавать, сохранять, использовать, изменять.</p>
+    <p class="calibre16">Стоп... Я сказал «изменять»? Так значит, поле можно изменить??</p>
+    <p class="calibre16">Конечно нет. Когда мы пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">email = <span class="a1">"me@dshevchenko.biz"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">мы тем самым объявляем: «Всё! С этого мгновения и до конца времён функция <span class="SourceText">email</span>, применённая к этому значению типа <span class="SourceText">User</span>, будет возвращать значение <span class="SourceText">"me@dshevchenko.biz"</span> и никакое другое.» Однако есть один способ, создающий <span class="calibre18">впечатление</span> изменяемости поля.</p>
+    <p class="calibre16">Смотрите:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: <span class="aaaa">User</span> -&gt; <span class="aaaa">String</span> -&gt; <span class="aaaa">User</span></p>
+    <p class="aa"><span>changeEmail</span> user newEmail = user { email = newEmail }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция меняет текущее значение поля <span class="SourceText">email</span> на значение <span class="SourceText">newEmail</span>, используя тот же синтаксис фигурных скобок, что и при создании <span class="SourceText">user</span>. Однако, сказав об отсутствии присваивания в Haskell, я не обманул вас. Поэтому значение поля <span class="SourceText">email</span> у аргумента <span class="SourceText">user</span> не изменится.</p>
+    <p class="calibre16">Обратите внимание на сигнатуру этой функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: <span class="aaaa">User</span> -&gt; <span class="aaaa">String</span> -&gt; <span class="aaaa">User</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы возвращаем значение типа <span class="SourceText">User</span>, но это уже не то значение, которое идёт первым аргументом. Здесь мы говорим: «Возьми аргумент <span class="SourceText">user</span> и создай на его основе такое же значение, но лишь с тем исключением, что значение поля <span class="SourceText">email</span> в этом новом значении будет равным <span class="SourceText">newEmail</span>.» И теперь мы можем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span class="aaa">let</span> userWithNewEmail = <span>changeEmail</span> user <span class="a1">"shev.denis@gmail.com"</span></p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    <span>print</span> $ <span>email</span> userWithNewEmail</p>
+    <p class="aa">    <span class="aaa">where</span> user = User { firstName = <span class="a1">"Denis"</span></p>
+    <p class="aa">                      , lastName = <span class="a1">"Shevchenko" </span></p>
+    <p class="aa">                      , email = <span class="a1">"me@dshevchenko.biz" </span></p>
+    <p class="aa">                      }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"shev.denis@gmail.com"</p>
+    <h3 id="toc91" class="calibre22">Укороченная запись типов полей</h3>
+    <p class="calibre16">Мы должны явно указывать типы всех наших полей. Однако если эти типы одинаковы, можно использовать сокращённую запись.</p>
+    <p class="calibre16">Вспомним наш тип:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , lastName :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , email :: <span class="aaaa">String</span></p>
+    <p class="aa">                 }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Все три поля имеют одинаковый тип, мы можем переписать объявление так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName</p>
+    <p class="aa">                 , lastName</p>
+    <p class="aa">                 , email :: <span class="aaaa">String</span></p>
+    <p class="aa">                 }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перечисляем поля и в конце указываем их тип. Кроме того, поля могут объединяться и по нескольким «типовым группам»:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName</p>
+    <p class="aa">                 , lastName</p>
+    <p class="aa">                 , email :: <span class="aaaa">String</span></p>
+    <p class="aa">                 , account</p>
+    <p class="aa">                 , uid :: <span class="aaaa">Integer</span></p>
+    <p class="aa">                 }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь у нас появились два новых поля, и мы опять использовали сокращённую типовую запись: группа из первых трёх полей имеет тип <span class="SourceText">String</span>, в то время как группа из полей <span class="SourceText">account</span> и <span class="SourceText">uid</span> имеет тип <span class="SourceText">Integer</span>.</p>
+    <h3 id="toc92" class="calibre22">Конструктор типа</h3>
+    <p class="calibre16">Помните, мы уже говорили о конструкторах? Но там речь шла о конструкторах значений, а теперь поговорим о конструкторах типов. Различаются они так: конструктор значения используется при создании значений, а конструктор типа — при создании типов.</p>
+    <p class="calibre16">Добавим в тип <span class="SourceText">User</span> чуток гибкости:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> year = <span class="aaaa">User</span> { firstName             <span class="aa1">-- строка</span></p>
+    <p class="aa">                      , lastName              <span class="aa1">-- опять строка</span></p>
+    <p class="aa">                      , email :: <span class="aaaa">String</span>       <span class="aa1">-- ещё одна строка</span></p>
+    <p class="aa">                      , yearOfBirth :: year   <span class="aa1">-- а это что??</span></p>
+    <p class="aa">                      , account               <span class="aa1">-- целое число</span></p>
+    <p class="aa">                      , uid :: <span class="aaaa">Integer</span>        <span class="aa1">-- тоже целое число</span></p>
+    <p class="aa">                      }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот эта строка:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> year = ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">говорит нам о том, что перед нами конструктор типа (type constructor). Тип поля <span class="SourceText">yearOfBirth</span> задан полиморфным типом <span class="SourceText">year</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn17" id="bodyftn17" class="pcalibre pcalibre1">17</a></span></span>. Это позволит нам инициализировать это поле как числом <span class="SourceText">1981</span>, так и, например, строкой <span class="SourceText">"1981"</span>.</p>
+    <p class="calibre16">Однако нас поджидает один неприятный сюрприз. Теперь функция <span class="SourceText">changeEmail</span> наотрез откажется работать с типом <span class="SourceText">User</span>. Но не ругайтесь на неё, она поступает абсолютно правильно. Вспомним её объявление:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: <span class="aaaa">User</span> -&gt; <span class="aaaa">String</span> -&gt; <span class="aaaa">User</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Она ожидает, что первым аргументом идет значение типа <span class="SourceText">User</span>, но ведь <span class="SourceText">User</span> — это уже не тип, а конструктор типа. Теперь мы должны любезно попросить его сконструировать для нас конкретный тип. Чтобы это сделать, мы должны применить конструктор типа к типу. Если функция применяется к значению, то конструктор типа применяется непосредственно к типу. Прямо так и пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaaa">User String</span>
+    </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В результате применения конструктора <span class="SourceText">User</span> к типу <span class="SourceText">String</span> был создан тип, аналогичный такому:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">User</span> = <span class="aaaa">User</span> { firstName      </p>
+    <p class="aa">                 , lastName  </p>
+    <p class="aa">                 , email </p>
+    <p class="aa">                 , yearOfBirth :: <span class="aaaa">String</span> </p>
+    <p class="aa">                 , account </p>
+    <p class="aa">                 , uid :: <span class="aaaa">Integer</span> </p>
+    <p class="aa">                 }</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Больше нет никакого полиморфного типа <span class="SourceText">year</span>, потому что тип поля <span class="SourceText">yearOfBirth</span> теперь равен типу <span class="SourceText">String</span>.</p>
+    <p class="calibre16">Следовательно, чтобы наша функция <span class="SourceText">changeEmail</span> смогла работать с типами, сконструированными конструктором <span class="SourceText">User</span>, это нужно явно указать в её объявлении:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: <span class="aaaa">User String</span> -&gt; <span class="aaaa">String</span> -&gt; <span class="aaaa">User String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Можно написать и так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: (<span class="aaaa">User</span> <span class="aaaa">String</span>) -&gt; <span class="aaaa">String</span> -&gt; (<span class="aaaa">User</span> <span class="aaaa">String</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы говорим нашей функции: «Первым аргументом ты теперь принимаешь значение типа, сконструированного путём применения конструктора <span class="SourceText">User</span> к типу <span class="SourceText">String</span>. Возвращаешь то же самое хозяйство.»</p>
+    <p class="calibre16">Разумеется, мы можем воспользоваться полиморфным типом и здесь:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>changeEmail</span> :: (<span class="aaaa">User</span> a) -&gt; <span class="aaaa">String</span> -&gt; (<span class="aaaa">User</span> a)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь мы говорим этой функции: «Теперь в качестве аргумента ты принимаешь значение типа, который был создан конструктором <span class="SourceText">User</span>, применённым к некоторому типу <span class="SourceText">a</span>.» Такой подход удобен в том случае, если мы не знаем заранее, какой конкретный тип будет подставлен вместо полиморфного.</p>
+    <p class="calibre16">Всё. О составных типах вы теперь знаете.</p>
+    </body>
+</html>

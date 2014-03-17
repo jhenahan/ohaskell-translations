@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc81" class="calibre8">О конструкторах значений</h2>
+    <p class="calibre16">Конструктор значения (value constructor) — штука полезная. Как мы увидели в предыдущей главе, конструктор позволяет идентифицировать значения наших собственных типов.</p>
+    <h3 id="toc82" class="calibre22">Иные имена</h3>
+    <p class="calibre16">Конструктор значения может отличаться от имени самого типа. Взгляните:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span>  <span class="aa1">-- Имя типа осталось неизменным</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Show IPAddress</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>show</span> (<span class="aaaa">IP</span> address) = </p>
+    <p class="aa">        <span class="aaa">if</span> address == <span class="a1">"127.0.0.1"</span> <span class="aaa">then</span> <span class="a1">"localhost"</span> <span class="aaa">else</span> address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь мы будем создавать значения нашего типа так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> $ <span class="aaaa">IP</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Такой подход позволяет писать более краткий, но при этом ничуть не менее понятный код. Обратите внимание: конструктор <span class="SourceText">IP</span> используется лишь в местах конструирования объекта, в то время как в описании экземпляра класса типов <span class="SourceText">Show</span> мы по-прежнему использовали имя самого типа <span class="SourceText">IPAddress</span>.</p>
+    <h3 id="toc83" class="calibre22">Множество конструкторов</h3>
+    <p class="calibre16">Конструкторов может быть более одного, и эта возможность используется очень часто. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span> | <span class="aaaa">Host String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы ввели два конструктора, <span class="SourceText">IP</span> и <span class="SourceText">Host</span>. Здесь используется оператор <span class="SourceText">'|'</span>, знакомый программистам C как оператор бинарного «ИЛИ». Выглядит довольно логично, и поэтому мы можем прочесть эту строку так:</p>
+    <p class="aa">data IPAddress  =  IP String  |  Host String</p>
+    <p class="aa">тип  IPAddress это IP String или Host String</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Определим метод <span class="SourceText">show</span> для каждого из этих конструкторов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Show IPAddress</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>show</span> (<span class="aaaa">IP</span> address) =</p>
+    <p class="aa">        address</p>
+    <p class="aa"> </p>
+    <p class="aa">    <span>show</span> (<span class="aaaa">Host</span> address) =</p>
+    <p class="aa"><span class="aaa">        if</span> address == <span class="a1">"127.0.0.1"</span> <span class="aaa">then</span> <span class="a1">"localhost"</span> <span class="aaa">else</span> address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь, если мы напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> $ <span class="aaaa">IP</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">127.0.0.1</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Если же мы используем второй конструктор:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> $ <span class="aaaa">Host</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">localhost</p>
+    <h3 id="toc84" class="calibre22">О нульарных конструкторах</h3>
+    <p class="calibre16">Нульарный конструктор (nullary constructor) используется в Haskell-коде довольно часто. Суть его проста.</p>
+    <p class="calibre16">Вспомним наш демонстрационный тип:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">За конструктором <span class="SourceText">IP</span> следует одно значение, поэтому такой конструктор называют одинарным. А нульарным называют такой конструктор, за которым никакого значения нет.</p>
+    <p class="calibre16">Допустим, нам нужен тип, ассоциированный с протоколами транспортного слоя (Transport layer) модели OSI. Вот как это будет выглядеть:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">TransportLayer</span> = <span class="aaaa">TCP</span> | <span class="aaaa">UDP</span> | <span class="aaaa">SCTP</span> | <span class="aaaa">DCCP</span> | <span class="aaaa">SPX</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Символ <span class="SourceText">'|'</span> вы уже знаете, но значений, как видите, здесь нет. Тип <span class="SourceText">TransportLayer</span> имеет пять нульарных конструкторов. И чтобы продемонстрировать вам практическую пользу такого типа, разберём пример.</p>
+    <p class="calibre16">Определим функцию, описывающую конкретный протокол:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>descriptionOf</span> :: <span class="aaaa">TransportLayer</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>descriptionOf</span> protocol =</p>
+    <p class="aa">    <span class="aaa">case</span> protocol <span class="aaa">of</span> </p>
+    <p class="aa">        <span class="aaaa">TCP</span>  -&gt; <span class="a1">"Transmission Control Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">UDP</span>  -&gt; <span class="a1">"User Datagram Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">SCTP</span> -&gt; <span class="a1">"Stream Control Transmission Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">DCCP</span> -&gt; <span class="a1">"Datagram Congestion Control Protocol"</span></p>
+    <p class="aa">        <span class="aaaa">SPX</span>  -&gt; <span class="a1">"Sequenced Packet Exchange"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы принимаем значение типа <span class="SourceText">TransportLayer</span> и возвращаем соответствующее ему строковое описание. Обратите внимание на конструкцию с ключевым словом <span class="SourceText">case</span>. Это — родственница конструкции <span class="SourceText">switch-case</span> из языка C.</p>
+    <p class="calibre16">Теперь проверяем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>descriptionOf</span> <span class="aaaa">TCP</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Для создания значения типа <span class="SourceText">TransportLayer</span>, к которому будет применена функция <span class="SourceText">descriptionOf</span>, мы использовали один из нульарных конструкторов. Никакого дополнительного значения здесь нет, потому что сам нульарный конструктор представляет собой значение.</p>
+    <p class="calibre16">Результат такой:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"Transmission Control Protocol"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Если вам нужен тип, подразумевающий фиксированное множество именованных значений — нульарные конструкторы вам помогут.</p>
+    </body>
+</html>

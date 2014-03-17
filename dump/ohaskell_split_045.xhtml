@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc151" class="calibre8">Аппликативные функторы</h2>
+    <p class="calibre16">Поговорим об аппликативных функторах (applicative functors). Знаю, название немного пугает, но поверьте, ничего страшного в них нет. Более того, аппликативный функтор, как вы вскоре убедитесь, очень полезный инструмент.</p>
+    <p class="calibre16">Суть проста. Если тип <span class="SourceText">X</span> является обыкновенным функтором, мы можем применить некую функцию к <span class="calibre18">одному</span> значению типа <span class="SourceText">X</span>. Если же тип <span class="SourceText">X</span> является аппликативным функтором, мы можем применить некую функцию к <span class="calibre18">нескольким</span> значениям типа <span class="SourceText">X</span>. Начнём.</p>
+    <h3 id="toc152" class="calibre22">Смотрим в код</h3>
+    <p class="calibre16">Аппликативные функторы (далее — АФ) отражены классом <span class="SourceText">Applicative</span>, проживающим в стандартном модуле <span class="SourceText">Control.Applicative</span>. Взглянем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><a id="tApplicative" class="pcalibre pcalibre1"></a><a id="bkmtApplicative" class="pcalibre pcalibre1"></a><span class="aaa">class</span> <span class="aaaa">Functor</span> f =&gt; <span class="aaaa">Applicative</span> f <span class="aaa">where</span></p>
+    <p class="aa"><a id="vpure" class="pcalibre pcalibre1"></a><a id="bkmvpure" class="pcalibre pcalibre1"></a>    <span>pure </span> :: a -&gt; f a</p>
+    <p class="aa"><a id="v604262" class="pcalibre pcalibre1"></a><a id="bkmv604262" class="pcalibre pcalibre1"></a>    (&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b  <span class="aa1">-- Наш главный герой.</span></p>
+    <p class="aa"><a id="v4262" class="pcalibre pcalibre1"></a><a id="bkmv4262" class="pcalibre pcalibre1"></a>    (*&gt;)  :: f a -&gt; f b -&gt; f b</p>
+    <p class="aa"><a id="v6042" class="pcalibre pcalibre1"></a><a id="bkmv6042" class="pcalibre pcalibre1"></a>    (&lt;*)  :: f a -&gt; f b -&gt; f a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами класс типов, каждый из которых обязан входить в контекст <span class="SourceText">Functor</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn0" id="bodyftn0" class="pcalibre pcalibre1">22</a></span></span>. Среди четырёх методов центральное место занимает оператор последовательного применения (sequential application). Взглянем на него ещё раз:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Пока не очень понятно, с чем это едят, но давайте поставим рядом с ним объявление нашей волшебницы <span class="SourceText">fmap</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b</p>
+    <p class="aa"><span>fmap</span>  ::   (a -&gt; b) -&gt; f a -&gt; f b</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Сразу повеяло обычным функтором, не так ли? Почти полное сходство, за исключением одной важной детали. Если <span class="SourceText">fmap</span> работает с функцией и функтором, то оператор <span class="SourceText">&lt;*&gt;</span> работает с двумя функторами. Причём наибольший интерес вызывает первый по счёту функтор, потому что он содержит в себе не значение, а функцию. Именна эта функция играет роль уже известной нам волшебной палочки: оператор <span class="SourceText">&lt;*&gt;</span> извлекает её из первого функтора и применяет ко второму (правому) функтору.</p>
+    <p class="calibre16">Вы спросите, зачем такие трудности? Рассмотрим пример.</p>
+    <h3 id="toc153" class="calibre22">Играемся с функтором</h3>
+    <p class="calibre16">Определим тип <span class="SourceText">Distance</span>, очень похожий на <span class="SourceText">Year</span> из предыдущей главы:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">Distance</span> value = <span class="aaaa">Distance</span> value</p>
+    <p class="aa">                         <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Значение типа <span class="SourceText">Distance</span> можно инициализировать значениями разного типа, и это хорошо. Но в реальном проекте мы едва ли ограничимся выводом значений типа <span class="SourceText">Distance</span> на экран. Мы обязательно захотим делать с этими значениями какие-нибудь интересные вещи.</p>
+    <p class="calibre16">Например, сложение. Определим соответствующую функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>add</span> (<span class="aaaa">Distance</span> a) (<span class="aaaa">Distance</span> b) = <span class="aaaa">Distance</span> (a + b)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь мы можем складывать наши дистанции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaaa">Distance</span> 19.78 <span>`add`</span> <span class="aaaa">Distance</span> 1.6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Distance 21.380000000000003</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Симпатично. Однако для дистанций одного сложения, вероятно, будет маловато. Определим функцию для вычитания:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>minus</span> (<span class="aaaa">Distance</span> a) (<span class="aaaa">Distance</span> b) = <span class="aaaa">Distance</span> (a - b)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь можно вычитать:</p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaaa">Distance</span> 19.78 <span>`minus`</span> <span class="aaaa">Distance</span> 1.6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Хм... Всё это, конечно, хорошо, но ведь можно ещё и умножать, и делить. Нам что, для каждой такой операции определять свою функцию? Нет, умный в гору не пойдёт. Мы ведь хотим упрощения нашей программистской жизни, а не усложнения. Тут-то и спешит нам на помощь АФ.</p>
+    <h3 id="toc154" class="calibre22">Превращаем</h3>
+    <p class="calibre16">Превратим тип <span class="SourceText">Distance</span> в АФ. Впрочем, я поторопился: сначала нам нужно сделать его обыкновенным функтором, а уже потом аппликативным. Пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Functor</span> <span class="aaaa">Distance</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>fmap</span> <span>magicWand</span> (<span class="aaaa">Distance</span> value) = <span class="aaaa">Distance</span> (<span>magicWand</span> value)</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Applicative</span> <span class="aaaa">Distance</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span class="aaaa">Distance</span> <span>magicWand</span> &lt;*&gt; functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Сначала наш тип превращается в обыкновенный функтор, благодаря чему мы сможем прикасаться функцией к его внутреннему содержимому. Затем мы делаем его аппликативным. Для нашей первой демонстрации нам понадобится лишь один из четырёх методов класса <span class="SourceText">Applicative</span>, поэтому остальные мы определять не будем.</p>
+    <p class="calibre16">Также обращаю ваше внимание на несколько необычную форму определения этого оператора:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Distance</span> <span>magicWand</span> &lt;*&gt; functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Более привычной для нас формой является такая:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(&lt;*&gt;) (<span class="aaaa">Distance</span> <span>magicWand</span>) functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ведь мы всегда так писали: сначала идёт имя функции, а потом её аргументы. Однако если мы определяем оператор, который заточен под инфиксную форму, то и определять его можно в такой же, инфиксной форме:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">Distance magicWand &lt;*&gt; functor = <span>...</span></p>
+    <p class="aa">|                      |</p>
+    <p class="aa">первый аргумент        второй аргумент</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ну а теперь пора разобраться, зачем же мы сделали всё это?</p>
+    <p class="calibre16">Этот механизм освобождает нас от обязанности самостоятельно определять бинарные функции для работы со значениями типа  <span class="SourceText">Distance</span>. Поэтому теперь, когда нам понадобится получить сумму двух дистанций, мы напишем вот так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ (+) &lt;$&gt; <span class="aaaa">Distance</span> 19.78 &lt;*&gt; <span class="aaaa">Distance</span> 1.6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Distance 21.380000000000003</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Если же нужно вычесть, пишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ (-) &lt;$&gt; <span class="aaaa">Distance</span> 19.78 &lt;*&gt; <span class="aaaa">Distance</span> 1.6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вполне ожидаемый результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Distance 18.18</p>
+    <h3 id="toc155" class="calibre22">Как это работает</h3>
+    <p class="calibre16">Скелет этой конструкции можно изобразить следующим образом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(+)       &lt;$&gt;      APPL_FTOR     &lt;*&gt;                APPL_FTOR</p>
+    <p class="aa">|         |        |             |                  |</p>
+    <p class="aa">функция   аналог   первый аппл.  оператор           второй аппл.</p>
+    <p class="aa">сложения  fmap     функтор       последовательного  функтор</p>
+    <p class="aa">                                 применения</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Сделав тип <span class="SourceText">Distance</span> аппликативным функтором, мы тем самым научили простые функции работать с двумя значениями типа <span class="SourceText">Distance</span> одновременно. Например, функцию сложения, возглавляющую эту строку. Эта функция и тип <span class="SourceText">Distance</span> не знакомы друг с другом, однако прекрасно работают вместе. Проследуем по шагам.</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(+) &lt;$&gt; APPL_FTOR</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На первом шаге оператор <span class="SourceText">&lt;$&gt;</span>, являющийся, как вы помните, инфиксной копией функции <span class="SourceText">fmap</span>, применил стоящую слева от него функцию сложения к функтору, стоящему справа. Чтобы понять произошедшее на этом шаге, вспомним объявление функции <span class="SourceText">fmap</span> для нашего типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>fmap</span> <span>magicWand</span> (<span class="aaaa">Distance</span> value) = <span class="aaaa">Distance</span> (<span>magicWand</span> value)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Заменим волшебную палочку на функцию сложения и <span class="SourceText">value</span> на реальное значение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>fmap</span> (+) (<span class="aaaa">Distance</span> 19.78) = <span class="aaaa">Distance</span> ((+) 19.78)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ба, знакомые все лица! Функция <span class="SourceText">fmap</span> возвращает значение типа <span class="SourceText">Distance</span>, но оно содержит в себе уже не число, а нашу старую подругу, частично применённую функцию. Эта функция появилась на свет благодаря применению функции сложения к единственному аргументу <span class="SourceText">19.78</span>.</p>
+    <p class="calibre16">Что же произошло на втором шаге? Взглянем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">APPL_FTOR &lt;*&gt; APPL_FTOR</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь вступает в игру оператор последовательного применения. Вспомним его определение для нашего типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Distance</span> <span>magicWand</span> &lt;*&gt; functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Подставим реальные значения для ясности:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Distance</span> ((+) 19.78) &lt;*&gt; <span class="aaaa">Distance</span> 1.6 = <span>fmap</span> ((+) 19.78)  <span class="aaaa">Distance</span> 1.6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь все карты раскрыты. В результате работы оператора <span class="SourceText">&lt;*&gt;</span> внутрення функция <span class="SourceText">fmap</span> применила нашу частично применённую функцию сложения к значению, содержащемуся во втором функторе. И на выходе мы получили результат сложения в виде <span class="SourceText">Distance 21.380000000000003</span>. </p>
+    <h3 id="toc156" class="calibre22">Не только два</h3>
+    <p class="calibre16">Раз мы смогли применить бинарную функцию к двум АФ одновременно, значит, можно и расшириться. Арность<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn22" id="bodyftn22" class="pcalibre pcalibre1">23</a></span> функции, поступающей на вход функторной очереди, должна соответствовать количеству функторов в этой очереди. Поэтому если нам нужно узнать общую длину трёх дистанций, мы пишем так:</p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa"><span>    print</span> $ <span>totalSum</span> &lt;$&gt; <span class="aaaa">Distance</span> 19.78 &lt;*&gt; <span class="aaaa">Distance</span> 1.6 &lt;*&gt; <span class="aaaa">Distance</span> 289.0</p>
+    <p class="aa">    <span class="aaa">where</span> <span>totalSum</span> arg1 arg2 arg3 = arg1 + arg2 + arg3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Три аргумента — три функтора. Функция <span class="SourceText">totalSum</span> бежит по ним и потихоньку собирает их внутренние значения в общую сумму, на выходе выдавая нам:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Distance 310.38</p>
+    <h3 id="toc157" class="calibre22">pure</h3>
+    <p class="calibre16">Перейдём к следующему методу класса <span class="SourceText">Applicative</span>, а именно <span class="SourceText">pure</span>. Вспомним его объявление:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>pure </span>:: a -&gt; f a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Назначение этого метода предельно простое: он берёт значение (которое на самом деле является функцией) и оборачивает его в АФ-обёртку.</p>
+    <p class="calibre16">Определим его для нашей дистанции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Applicative</span> <span class="aaaa">Distance</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span class="aaaa">Distance</span> <span>magicWand</span> &lt;*&gt; functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="aa">    <span>pure</span> <span>magicWand </span>= <span class="aaaa">Distance </span><span>magicWand</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы указали, что метод <span class="SourceText">pure</span> теперь равен нашему конструктору типа <span class="SourceText">Distance</span>. Мы могли бы использовать и сокращённую форму:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>pure </span>= <span class="aaaa">Distance</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это позволит нам переписать наш пример так:</p>
+    <p class="aa">
+      <span>...    </span>
+    </p>
+    <p class="aa"><span>    print</span> $ <span>pure</span> <span>totalSum</span> &lt;*&gt; <span class="aaaa">Distance</span> 19.78 </p>
+    <p class="aa">                          &lt;*&gt; <span class="aaaa">Distance</span> 1.6 </p>
+    <p class="aa">                          &lt;*&gt; <span class="aaaa">Distance</span> 289.0</p>
+    <p class="aa">    <span class="aaa">where</span> <span>totalSum</span> arg1 arg2 arg3 = arg1 + arg2 + arg3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь уже нет оператора <span class="SourceText">&lt;$&gt;</span>, его обязанности на себя взяла функция <span class="SourceText">pure</span>, которая взяла функцию <span class="SourceText">totalSum</span> и, скажем так, подготовила её к работе с нашими аппликативными функторами. В англоязычной документации пишут, что функция <span class="SourceText">pure</span> подняла (lift) функцию <span class="SourceText">totalSum</span>. Это можно воспринимать как подъём на более высокий уровень абстрации: была просто функция, а стала... непросто функция.</p>
+    <h3 id="toc158" class="calibre22">Последовательность действий</h3>
+    <p class="calibre16">Оставшиеся два метода класса <span class="SourceText">Applicative</span> называют операторами последовательности действий. Вспомним их:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(*&gt;) :: f a -&gt; f b -&gt; f b</p>
+    <p class="aa">(&lt;*) :: f a -&gt; f b -&gt; f a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это — младшие братья оператора последовательного применения. Первый из них выбрасывает значение своего первого аргумента. Второй — выбрасывает значение второго:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(*&gt;) ::   f a  -&gt;  f b -&gt; f b</p>
+    <p class="aa">          ---      ===    ===</p>
+    <p class="aa">       игнорирую</p>
+    <p class="aa">        первый</p>
+    <p class="aa"> </p>
+    <p class="aa">(&lt;*) :: f a -&gt;   f b   -&gt; f a</p>
+    <p class="aa">        ===      ---      ===</p>
+    <p class="aa">              игнорирую</p>
+    <p class="aa">                второй</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Чтобы стало понятнее, определим первый из этих операторов для нашего типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Applicative</span> <span class="aaaa">Distance</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span class="aaaa">Distance</span> <span>magicWand</span> &lt;*&gt; functor = <span>fmap</span> <span>magicWand</span> functor</p>
+    <p class="aa">    <span>pure</span> <span>magicWand </span>= <span class="aaaa">Distance </span><span>magicWand</span></p>
+    <p class="aa">    <span class="aaaa">Distance</span> a *&gt; <span class="aaaa">Distance</span> b = <span class="aaaa">Distance</span> b  <span class="aa1">-- Просто возвращаем второй...</span>  </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Предельно тривиально: оператор <span class="SourceText">*&gt;</span> разрывает цепочку передачи значения между функторами. Например, если мы напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa">
+      <span>main</span>
+      <span> =  </span>
+    </p>
+    <p class="aa"><span>    print</span> $ <span>pure</span> <span>totalSum</span> &lt;*&gt; <span class="aaaa">Distance</span> 19.78 </p>
+    <p class="aa">                          &lt;*&gt; <span class="aaaa">Distance</span> 1.6 </p>
+    <p class="aa">                          &lt;*&gt; <span class="aaaa">Distance</span> 289.0</p>
+    <p class="aa">                          *&gt;  <span class="aaaa">Distance</span> 2.0  <span class="aa1">-- Цепочка уже разорвалась!</span></p>
+    <p class="aa">    <span class="aaa">where</span> <span>totalSum</span> arg1 arg2 arg3 = arg1 + arg2 + arg3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">ответом будет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Distance 2.0</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Так получилось потому, что значение типа <span class="SourceText">Distance</span>, возвращённое третьим по счёту оператором <span class="SourceText">&lt;*&gt;</span>, поступило на вход оператору <span class="SourceText">*&gt;</span> и было благополучно забыто. Ведь мы помним, что оператор <span class="SourceText">*&gt;</span> всего лишь возвращает свой второй операнд, в нашем случае функтор <span class="SourceText">Distance 2.0</span>.</p>
+    <p class="calibre16">Вы спросите, в чём же смысл такого оператора, если он ничего не извлекает из своего левого операнда? Смысл есть тогда, когда извлекать... нечего. И чтобы продемонстрировать это, открою вам тайну: тип <span class="SourceText">IO</span> — это не только монада, но и аппликативный функтор. А если быть совсем честным, все стандартные монады являются АФ.</p>
+    <h3 id="toc159" class="calibre22">Играемся с монадами</h3>
+    <p class="calibre16">Вспомним пример с получением двух строк от пользователя:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    firstText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"One more, please: "</span></p>
+    <p class="aa">    secondText &lt;- <span>getLine</span></p>
+    <p class="aa"><span class="a1">    </span><span>return</span><span class="a1"> $ </span>firstText ++ secondText</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    twoTexts &lt;- <span>obtainTwoTextsFromUser</span></p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"You said "</span> ++ twoTexts</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обратите внимание: в теле функции <span class="SourceText">obtainTwoTextsFromUser</span> мы явно «извлекаем» ассоциированные с <span class="SourceText">IO</span>-монадами строки, <span class="SourceText">firstText</span> и <span class="SourceText">secondText</span>. Перепишем эту функцию, памятуя о том, что <span class="SourceText">IO</span> — это АФ:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = </p>
+    <p class="aa">    (++) &lt;$&gt; getFirstText &lt;*&gt; getSecondText  <span class="aa1">-- Складываем строки.  </span></p>
+    <p class="aa">    <span class="aaa">where</span> getFirstText = <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span> *&gt; <span>getLine</span></p>
+    <p class="aa">          getSecondText = <span>putStrLn</span> <span class="a1">"One more, please: "</span> *&gt; <span>getLine</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь разберёмся. Начнём с <span class="SourceText">getFirstText</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">getFirstText = <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span> *&gt; <span>getLine</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Как мы помним, функция <span class="SourceText">putStrLn</span> возвращает значение типа <span class="SourceText">IO ()</span>, следовательно, после её завершения этот код станет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">getFirstText = <span class="aaaa">IO</span><span class="a1"> </span>() *&gt; <span>getLine</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь вы понимаете, почему здесь используется оператор <span class="SourceText">*&gt;</span>. Раз из значения типа <span class="SourceText">IO ()</span> ничего нельзя извлечь, оно игнорируется, и мы просто переходим к функции <span class="SourceText">getLine</span>. Она, получив от пользователя текст, возвращает значение типа <span class="SourceText">IO String</span>, и теперь этот код можно изобразить так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">getFirstText = <span class="aaaa">IO</span><span class="a1"> </span>() *&gt; <span class="aaaa">IO String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Значение типа <span class="SourceText">IO String</span> связывается с идентификатором <span class="SourceText">getFirstText</span>. И то же самое происходит с <span class="SourceText">getSecondText</span>. </p>
+    <p class="calibre16">Следовательно, после получения двух текстов от пользователя, код приобретёт вот такой вид:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> :: <span class="aaaa">IO String </span><span class="aa1"> </span></p>
+    <p class="aa"><span>obtainTwoTextsFromUser</span> = </p>
+    <p class="aa">    (++) &lt;$&gt; <span class="aaaa">IO String</span> &lt;*&gt; <span class="aaaa">IO String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ну а тут уже всё как обычно: функция <span class="SourceText">(++)</span> пробегается по двум АФ, забирает их строки, складывает их, и в итоге функция <span class="SourceText">obtainTwoTextsFromUser</span> возвращает значение <span class="SourceText">IO String</span>, уже содержащее в себе оба пользовательских текста.</p>
+    <p class="calibre16">Теперь мы узнали, что <span class="SourceText">&lt;*&gt;</span> может протаскивать функцию в том числе и через результаты работы функций с побочными эффектами.</p>
+    <h3 id="toc160" class="calibre22">Родственники</h3>
+    <p class="calibre16">Кстати, у вас не возникло чувство дежавю? Мы взяли функцию, обернули её в некую обёртку, прогнали через цепочку неких сущностей, попутно извлекая из них какие-то значения, а в итоге общий результат вернули в той же обёртке. Всё это мы уже видели в монадическом механизме! Взгляните хотя бы на метод <span class="SourceText">pure</span>: это же клон метода <span class="SourceText">return</span>.</p>
+    <p class="calibre16">АФ и монады действительно близкие родственники. Во-первых, и первые и вторые формализуют «цепочечный механизм»<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn23" id="bodyftn23" class="pcalibre pcalibre1">24</a></span>, а во-вторых, как уже было сказано ранее, все стандартные монадами являются АФ.</p>
+    <p class="calibre16">Однако следует помнить, что связь между монадами и АФ односторонняя: монады являются АФ, но не наоборот. Поэтому не рекомендуется использовать монады там, где достаточно возможностей функторов. Так что если вам нужно, например, произвести некое действие с элементами списка, вы <span class="calibre18">можете</span> вспомнить о его монадической природе и написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ [1, 2, 3] &gt;&gt;= \number -&gt; <span>return</span> $ number * 2</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">но лучше вспомнить о функторной природе списка и написать проще:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Control.Applicative</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ (*2) &lt;$&gt; [1, 2, 3]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот, собственно, и всё. Теперь вы знаете, что такое аппликативные функторы.</p>
+    </body>
+</html>

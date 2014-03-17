@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc65" class="calibre8">Кортежи</h2>
+    <p class="calibre16">Кортеж — это особый вид списка. Он тоже хранит в себе набор элементов, однако имеет три фундаментальных отличия от списка:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">круглые скобки вместо квадратных;</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">гетерогенность;</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">тип, зависящий от размера.</p>
+      </li>
+    </ol>
+    <p class="calibre16">С первым отличием всё очевидно:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span class="a1">"Denis"</span>, <span class="a1">"Shevchenko"</span>]  <span class="aa1">-- Это список из двух строк.</span></p>
+    <p class="aa">(<span class="a1">"Denis"</span>, <span class="a1">"Shevchenko"</span>)  <span class="aa1">-- Это кортеж из двух строк.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Второе отличие — это способность кортежа хранить в себе элементы разных типов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span class="a1">"Denis"</span>, 1.234]  <span class="aa1">-- Будьте уверены, компиляция не пройдёт...</span></p>
+    <p class="aa">(<span class="a1">"Denis"</span>, 1.234)  <span class="aa1">-- А тут - без проблем!</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь о третьем отличии. Если у нас есть два разных по размеру списка строк:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span class="a1">"Denis"</span>, <span class="a1">"Vasil`evich"</span>, <span class="a1">"Shevchenko"</span>]</p>
+    <p class="aa">[<span class="a1">"Denis"</span>, <span class="a1">"Shevchenko"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">тип обоих этих списков одинаков, а именно <span class="SourceText">[String]</span>. Тип списка не зависит от количества элементов в нём.</p>
+    <p class="calibre16">С кортежами всё обстоит совершенно иначе. Если у нас есть два кортежа, разных по длине:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(<span class="a1">"Denis"</span>, <span class="a1">"Vasil`evich"</span>, <span class="a1">"Shevchenko"</span>)</p>
+    <p class="aa">(<span class="a1">"Denis"</span>, <span class="a1">"Shevchenko"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">типы этих кортежей абсолютно разные: тип первого <span class="SourceText">(String, String, String)</span>, а тип второго <span class="SourceText">(String, String)</span>. Поэтому если функцию, в качестве аргумента ожидающую кортеж из двух строк, применить к кортежу из трёх строк, компилятор выразит свой категорический протест:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Couldn't match expected type `(String, String)'</p>
+    <p class="a">            with actual type `([Char], [Char], [Char])'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Оно и понятно: ожидали кортеж из двух строк, а тут вдруг — из трёх!</p>
+    <p class="calibre16">Кстати, кортеж похож на список ещё и тем, что может быть пустым, то есть не содержать в себе ни одного элемента.</p>
+    <h3 id="toc66" class="calibre22">Что с ними можно делать</h3>
+    <p class="calibre16">Единственное, что можно сделать с кортежем — извлечь хранящиеся в нём элементы. Всё.</p>
+    <p class="calibre16">На практике чаще всего используют кортежи из двух элементов. Такой кортеж ещё называют парой (pair). Чтобы извлечь хранящиеся в нём элементы, используются стандартные функции <span class="SourceText">fst</span> и <span class="SourceText">snd</span>.</p>
+    <p class="calibre16">Определим функцию, применяющуюся к кортежу, хранящему две части шахматного хода:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>chessMove</span> :: (<span class="aaaa">String</span>, <span class="aaaa">String</span>) -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>chessMove</span> pair = <span>fst</span> pair ++ <span class="a1">"-"</span> ++ <span>snd</span> pair</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>chessMove</span> (<span class="a1">"e2"</span>, <span class="a1">"e4"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы последовательно извлекли первый и второй элементы из полученной пары и сделали из них единую строку.</p>
+    <p class="calibre16">Но что же мы будем делать, если количество элементов в кортеже больше двух? Ведь функции <span class="SourceText">fst</span> и <span class="SourceText">snd</span> работают только с парами. Если элементов больше двух, извлекать их нужно иным способом.</p>
+    <h3 id="toc67" class="calibre22">Неудобный способ</h3>
+    <p class="calibre16">Первый способ неудобен, ибо нам придётся самим определять необходимые функции. Но нас трудности не страшат, поэтому сделаем это:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>get1</span> (element, _, _, _) = element</p>
+    <p class="aa"><span>get2</span> (_, element, _, _) = element</p>
+    <p class="aa"><span>get3</span> (_, _, element, _) = element</p>
+    <p class="aa"><span>get4</span> (_, _, _, element) = element</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Подразумевается, что мы хотим работать с кортежем из четырёх элементов. В этом случае у нас есть лишь четыре варианта извлечения, поэтому определим функцию для извлечения первого элемента, второго, третьего и четвёртого. Кстати, говоря «первый элемент», мы подразумеваем именно первый по счёту, поэтому цифра <span class="SourceText">1</span> в имени <span class="SourceText">get1</span> — это порядковый номер, а не индекс.</p>
+    <p class="calibre16">А теперь рассмотрим определение первой функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>get1</span> (element, _, _, _) = element</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция применяется к кортежу из четырёх элементов и возвращает первый из них. Обратите внимание на странные символы подчёркивания. Воспринимайте этот символ как «нечто», «что бы то ни было». Мы говорим: «Да, в этом кортеже есть четыре элемента, но нас абсолютно не интересует, что там под номером два, и что под номером три, и что под номером четыре. Нас интересует только то, что под номером один. Вот этот номер один мы и вернём.»</p>
+    <p class="calibre16">Так же и вторая функция:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>get2</span> (_, element, _, _) = element</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Получаем четыре элемента, и хотя что-то там стоит под номерами один, три и четыре, нас это не волнует, нам нужен только элемент под номером два, поэтому именно его и возвращаем.</p>
+    <p class="calibre16">А теперь мы пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>get3</span> (<span class="a1">"One"</span>, <span class="a1">"Two"</span>, <span class="a1">"Three"</span>, <span class="a1">"Four"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и получаем ожидаемый результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"Three"</p>
+    <h3 id="toc68" class="calibre22">Удобный способ</h3>
+    <p class="calibre16">Зачем делать самому то, что уже сделали другие? А другие уже сделали пакет <span class="SourceText">tuple</span> из Hackage<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn16" id="bodyftn16" class="pcalibre pcalibre1">16</a></span>.</p>
+    <p class="calibre16">Установим его командой:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal install tuple</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Затем добавим имя этого пакета к параметру <span class="SourceText">build-depends</span> в нашем <span class="SourceText">.cabal</span>-файле:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">    build-depends:       base ==4.6.*, tuple</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Импортируем модуль <span class="SourceText">Data.Tuple.Select</span>, и сразу же можем приступить:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Tuple.Select</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>sel3</span> (<span class="a1">"One"</span>, <span class="a1">"Two"</span>, <span class="a1">"Three"</span>, <span class="a1">"Four"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Метод <span class="SourceText">sel3</span> извлекает третий элемент кортежа. Просто и удобно. Кстати, в модуле <span class="SourceText">Data.Tuple.Select</span> определены функции от <span class="SourceText">sel1</span> до <span class="SourceText">sel15</span>. Авторы вполне резонно предположили, что создавать кортеж из более чем 15 элементов никакому вменяемому программисту в голову не придёт…</p>
+    <p class="calibre16">А кстати, как же насчёт безопасности? Что будет, если мы по ошибке попытаемся извлечь из этого кортежа пятый элемент? Попробуем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Tuple.Select</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>sel5</span> (<span class="a1">"One"</span>, <span class="a1">"Two"</span>, <span class="a1">"Three"</span>, <span class="a1">"Four"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Итак, пытаемся извлечь пятый элемент при наличии только четырёх. Получили трудноуловимую ошибку? Или, может, будет брошено исключение? Вовсе нет. Такой код просто не пройдёт компиляцию:</p>
+    <p class="calibre16"> </p>
+    <p class="a">src/Main.hs:23:12:</p>
+    <p class="a">    No instance for (Sel5 ([Char], [Char], [Char], [Char]) a0)</p>
+    <p class="a">      arising from a use of `sel5'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип кортежа жёстко завязан на количество хранящихся в нём значений. Именно поэтому такого рода ошибки будут выявлены на стадии компиляции.</p>
+    <p class="calibre16">Теперь вы и о кортежах знаете.</p>
+    </body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc99" class="calibre8">Собственные классы типов</h2>
+    <p class="calibre16">До этого мы рассматривали лишь стандартные классы типов. А теперь поговорим о собственных классах типов.</p>
+    <h3 id="toc100" class="calibre22">Перцы</h3>
+    <p class="calibre16">Объявим класс типов <span class="SourceText">Pepper</span> (перец):</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">SHU</span> = <span class="aaaa">Integer</span>  <span class="aa1">-- SHU (Scoville Heat Units), единица жгучести перца</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Pepper</span> pepper <span class="aaa">where</span></p>
+    <p class="aa">    <span>color</span> :: pepper -&gt; <span class="aaaa">String</span></p>
+    <p class="aa">    <span>pungency</span> :: pepper -&gt; <span class="aaaa">SHU</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">У этого класса два метода, <span class="SourceText">color</span> (цвет) и <span class="SourceText">pungency</span> (жгучесть). Создадим два разных перца:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Poblano</span> = <span class="aaaa">Poblano</span>  <span class="aa1">-- распространён в национальных блюдах Мексики</span></p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">TrinidadScorpion</span> = <span class="aaaa">TrinidadScorpion</span>  <span class="aa1">-- самый жгучий перец в мире</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Pepper</span> <span class="aaaa">Poblano</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>color</span> <span class="aaaa">Poblano</span> = <span class="a1">"green"</span></p>
+    <p class="aa">    <span>pungency</span> <span class="aaaa">Poblano</span> = 1500</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Pepper</span> <span class="aaaa">TrinidadScorpion</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>color</span> <span class="aaaa">TrinidadScorpion</span> = <span class="a1">"red"</span></p>
+    <p class="aa">    <span>pungency</span> <span class="aaaa">TrinidadScorpion</span> = 855000</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь мы можем работать с этими перцами как обычно:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>putStrLn</span> $ <span>show</span> (<span>pungency</span> trinidad) ++ ", " ++ <span>color</span> trinidad</p>
+    <p class="aa">    <span class="aaa">where</span> trinidad = <span class="aaaa">TrinidadScorpion</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <h3 id="toc101" class="calibre22">Зачем они нужны</h3>
+    <p class="calibre16">В самом деле, разве мы не можем использовать каждый из типов перца самостоятельно?</p>
+    <p class="calibre16">Конечно можем. Главная цель определения собственного класса типов — указание контекста типов. Определим функцию, выводящую информацию о конкретном перце:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>pepperInfo</span> :: <span class="aaaa">Pepper</span> pepper =&gt; pepper -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>pepperInfo</span> pepper = <span>show</span> (<span>pungency</span> pepper) ++ <span class="a1">", "</span> ++ <span>color</span> pepper</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Контекст полиморфного типа <span class="SourceText">pepper</span> говорит нам о том, что эта функция предназначена только для работы с перцами. Более того, сам класс тоже может иметь контекст типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Pepper</span> pepper =&gt; <span class="aaaa">Chili</span> pepper <span class="aaa">where</span></p>
+    <p class="aa">    <span>kind</span> :: pepper -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Класс типов <span class="SourceText">Chili</span> объявлен с контекстом <span class="SourceText">Pepper</span>. Следовательно, занять место полиморфного типа <span class="SourceText">pepper</span> смогут лишь те типы, которые относятся к классу <span class="SourceText">Pepper</span>, и никакие другие. Это позволит нам ограничить набор типов, которые смогут иметь отношение к классу <span class="SourceText">Chili</span>.</p>
+    <p class="calibre16">Разумеется, контекст может состоять и из нескольких классов. В этом случае они, как обычно, перечисляются в виде кортежа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> (<span class="aaaa">Pepper</span> pepper, <span class="aaaa">Capsicum</span> pepper) =&gt; <span class="aaaa">Chili</span> pepper <span class="aaa">where</span></p>
+    <p class="aa">    <span>kind</span> :: pepper -&gt; <span class="aaaa">String</span></p>
+    <h3 id="toc102" class="calibre22">Константы</h3>
+    <p class="calibre16">Добавим в наш класс константу:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">SHU</span> = <span class="aaaa">Integer</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Pepper</span> pepper <span class="aaa">where</span></p>
+    <p class="aa">    simple :: pepper              <span class="aa1">-- это константное значение, а не функция</span></p>
+    <p class="aa">    <span>color</span> :: pepper -&gt; <span class="aaaa">String</span></p>
+    <p class="aa">    <span>pungency</span> :: pepper -&gt; <span class="aaaa">SHU</span></p>
+    <p class="aa">    <span>name</span> :: pepper -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Poblano</span> = <span class="aaaa">Poblano</span> <span class="aaaa">String</span>     <span class="aa1">-- унарный конструктор вместо нульарного</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Pepper</span> <span class="aaaa">Poblano</span> <span class="aaa">where</span></p>
+    <p class="aa">    simple = <span class="aaaa">Poblano</span> <span class="a1">"ancho"</span>      <span class="aa1">-- готовим простое значение</span></p>
+    <p class="aa">    <span>color</span> (<span class="aaaa">Poblano</span> name) = <span class="a1">"green"</span></p>
+    <p class="aa">    <span>pungency</span> (<span class="aaaa">Poblano</span> name) = 1500</p>
+    <p class="aa">    <span>name</span> (<span class="aaaa">Poblano</span> name) = name</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>name</span> (simple :: <span class="aaaa">Poblano</span>) <span class="aa1">-- обращаемся к значению</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"><span class="SourceText">simple</span> — это константное значение, к которому можно обращаться напрямую. Мы говорим: «Каждый тип, относящийся к классу <span class="SourceText">Pepper</span>, обязан предоставлять константу <span class="SourceText">simple</span> своего собственного типа.» Поэтому при определении экземпляра класса <span class="SourceText">Pepper</span> мы готовим это константное значение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">simple = <span class="aaaa">Poblano</span> <span class="a1">"ancho"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Поскольку теперь конструктор значения <span class="SourceText">Poblano</span> у нас унарный, он принимает строку (например, название перца или ассоциативного блюда). Здесь мы говорим: «Когда кто-нибудь обратится к константе <span class="SourceText">simple</span>, принадлежащей типу <span class="SourceText">Poblano</span>, он получит такое значение, как если бы мы написали просто <span class="SourceText">Poblanlo</span> <span class="SourceText">"ancho"</span>.» Таким образом, эту константу можно рассматривать как конструктор по умолчанию для значения типа <span class="SourceText">Poblano</span>. И это весьма удобно: если для нашего типа имеет смысл некоторое умолчальное значение, лучше задавать его прямо внутри нашего типа.</p>
+    <p class="calibre16">Всё. Теперь вы знаете о пользовательских классах типов.</p>
+    </body>
+</html>

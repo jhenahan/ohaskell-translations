@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc42" class="calibre8">λ-функции</h2>
+    <p class="calibre16">Теперь мы должны познакомится с любопытной и важной концепцией, а именно с λ-функциями (лямбда-функциями).</p>
+    <p class="calibre16">Вспомним упомянутое в предыдущей главе определение математической функции:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre24">Функция — это описание зависимости чего-то от чего-то.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако в языке C (и подобных ему языках) функция никогда не ассоциировалась с таким определением. Напротив, функция там есть ни что иное, как подпрограмма, а имя функции есть ни что иное, как указатель на первую инструкцию этой подпрограммы.</p>
+    <p class="calibre16">Кроме того, функция в языке C является глобальной в рамках текущей единицы трансляции. И поэтому вызов функции — это своего рода «глобальный <span class="SourceText">goto</span>» в её тело, с последующим возвратом из него. Именно поэтому функция в языке C не может быть безымянной, потому что иначе её невозможно было бы вызвать.</p>
+    <p class="calibre16">λ-функция — совсем другой зверь.</p>
+    <h3 id="toc43" class="calibre22">Что это такое</h3>
+    <p class="calibre16">В основе λ-функций лежит λ-исчисление, названное так по имени красивой греческой буквы. У λ-исчисления довольно-таки долгая академическая история, но нас интересует практическая сторона, поэтому сразу приведу пример.</p>
+    <p class="calibre16">Допустим, нам нужна математическая функция, принимающая некое целочисленное значение и возвращающая квадрат этого значения. Такую функцию мы можем описать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">5 -&gt; f -&gt; 25</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Проще некуда: на входе — <span class="SourceText">5</span>, на выходе — <span class="SourceText">25</span>. Внутренности этой функции можно описать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">5 -&gt; (x * x) -&gt; 25</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А теперь главный вопрос: как такую функцию описать <span class="calibre18">формально</span>? Вот тут-то на сцену и выходит λ-исчисление, ибо оно как раз и предлагает формализованный способ записи функции. Для нашей функции эта запись будет такой:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">λx.x * x</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Буква λ — это признак λ-функции. А читать это выражение следует так: «λ-функция (от) одного аргумента x, возвращающая результат умножения этого аргумента на самого себя».</p>
+    <p class="calibre16">Разделителем здесь является точка. Выражение слева от этой точки — список аргументов (в данном случае он один), а выражение справа от неё — тело функции.</p>
+    <p class="calibre16">Простое и элегантное описание, ничего лишнего. Нет даже имени. Особенностью λ-функции является её безымянность, ведь имя ей не нужно. И это принципиально отличает её от «обыкновенной» функции.</p>
+    <h3 id="toc44" class="calibre22">Как это выглядит в коде</h3>
+    <p class="calibre16">λ-функции присутствуют во многих языках, но в Haskell вид λ-выражения максимально приближен к математическому. Сравните:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">λx .  x * x  -- Математическая форма</p>
+    <p class="aa">\x -&gt; x * x  -- Haskell-форма</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Прямое сходство. Даже backslash вначале подходит как нельзя лучше: рассматривайте его как «спинку» буквы λ. Единственное отличие — это замена точки стрелочкой.</p>
+    <p class="calibre16">А теперь возникает резонный вопрос: как мы можем вызвать такую функцию? Вероятно, ответ удивит вас, но λ-функции, строго говоря, не вызывают. Впрочем, это лишь игра слов. Вернёмся на минутку в математику.</p>
+    <p class="calibre16">Идея λ-функции базируется на математическом принципе «аппликации» (application), или «применения». λ-функцию не вызывают с аргументом, а применяют (апплицируют) её к аргументу. Поэтому запись вида:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">f a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">принято читать так: «Применение функции <span class="SourceText">f</span> к аргументу <span class="SourceText">a</span>.»</p>
+    <p class="calibre16">Вот как это выглядит в Haskell:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(\x -&gt; x * x) 5</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">λ-выражение, находящееся в скобках, порождает λ-функцию, которая сразу же применяется к аргументу <span class="SourceText">5</span>.</p>
+    <h3 id="toc45" class="calibre22">Множество аргументов</h3>
+    <p class="calibre16">λ-функция может применяться и к нескольким аргументам. Пусть у нас теперь будет функция, возвращающая результат умножения первого значения на второе:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> (<span>f</span> 5 6)</p>
+    <p class="aa">    <span class="aaa">where</span> <span>f</span> = \arg1 arg2 -&gt; arg1 * arg2</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Между backslash и стрелочкой идёт список имён аргументов функции.</p>
+    <h3 id="toc46" class="calibre22">Какая от них польза</h3>
+    <p class="calibre16">В языке C принята стандартная последовательность из трёх шагов при работе с функцией:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">объявление,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">определение,</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">вызов.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">int</span> <span>sq</span>( <span class="aaaa">int</span> i ) {</p>
+    <p class="aa">    <span class="aaa">return</span> i * i;</p>
+    <p class="aa">}</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaaa">int</span> <span>main</span>() {</p>
+    <p class="aa">    <span>printf</span>( <span class="a1">"%d"</span>, <span>sq</span>( 5 ) );</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы готовим нашу «глобальную подпрограмму», а потом заходим в неё через вызов.</p>
+    <p class="calibre16">А вот как это выглядит в Haskell:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> ((\x -&gt; x * x) 5)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы ничего не готовим заранее. Напротив, мы создаём функцию как значение, локально и непосредственно перед использованием. Создаём — и тут же применяем её к аргументу <span class="SourceText">5</span>.</p>
+    <p class="calibre16">Для простоты мы можем ввести пояснительное выражение для нашей функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> (<span>f</span> 5)</p>
+    <p class="aa">    <span class="aaa">where</span> <span>f</span> = \x -&gt; x * x</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> Одно из преимуществ λ-функции как раз и заключается в её локальности. Зачем нам заранее объявлять и определять функцию, если мы можем создать и сразу использовать её непосредственно в том месте, где она нужна?</p>
+    <p class="calibre16">Конечно, если λ-функция используется в нескольких местах, мы можем, во избежание дубляжа, определить её глобально, связав с некоторым именем. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>f</span> = \x -&gt; x * x</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> ((<span>f</span> 5) + (<span>f</span> 6))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Выражение <span class="SourceText">f</span> равно нашей λ-функции, и теперь мы можем многократно применять это выражение к различным аргументам.</p>
+    <p class="calibre16">Готово. Теперь вы знаете, что такое λ-функции. Однако самое интересное их применение связано с функциями высшего порядка, о которых мы поговорим прямо сейчас.</p>
+    </body>
+</html>

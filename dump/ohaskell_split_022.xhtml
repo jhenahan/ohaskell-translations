@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc57" class="calibre8">Списки — одним взглядом</h2>
+    <p class="calibre16">Списки в Haskell — это наборы элементов одного типа. Приступим к их изучению.</p>
+    <p class="calibre16">Прежде всего знайте: когда вы видите в коде квадратные скобки — значит, список где-то рядом. Вот список из трёх целочисленных элементов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[1, 2, 3]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">а вот пустой список:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Элементами списка могут быть значения любого типа, в том числе и другие списки. Мы даже можем создать список функций, но после прочтения предыдущих глав вас этот факт не должен удивлять.</p>
+    <h3 id="toc58" class="calibre22">Простейшие действия</h3>
+    <p class="calibre16">Если списки создаются — значит это кому-нибудь нужно. Вот функция, возвращающая список из трёх строк:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>listOfNames</span> :: <span class="aaaa">String</span> -&gt; [<span class="aaaa">String</span>]</p>
+    <p class="aa"><span>listOfNames</span> prefix =</p>
+    <p class="aa">    [prefix ++ <span class="a1">"John"</span>, prefix ++ <span class="a1">"Anna"</span>, prefix ++ <span class="a1">"Andrew"</span>]</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>listOfNames</span> <span class="a1">"Dear "</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Dear John","Dear Anna","Dear Andrew"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обратите внимание на объявление этой функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>listOfNames</span> :: <span class="aaaa">String</span> -&gt; [<span class="aaaa">String</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип <span class="SourceText">[String]</span> — это тип списка строк. А, например, список символов объявляется как <span class="SourceText">[Char]</span>. Кстати говоря, строка — это и есть список символов, то есть тип <span class="SourceText">String</span> эквивалентен типу <span class="SourceText">[Char]</span>. Поэтому объявление может быть и таким:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>listOfNames</span> :: <span class="aaaa">String</span> -&gt; [[<span class="aaaa">Char</span>]]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот так можно узнать размер списка:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>length</span> listOfAnimals</p>
+    <p class="aa">    <span class="aaa">where</span> listOfAnimals = [<span class="a1">"Bear"</span>, <span class="a1">"Tiger"</span>, <span class="a1">"Lion"</span>, <span class="a1">"Wolf"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А так можно узнать, есть ли заданное значение в списке:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>thisIsAWildAnimal</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa"><span>thisIsAWildAnimal</span> name =</p>
+    <p class="aa">    name <span>`elem`</span> wildAnimals</p>
+    <p class="aa">    <span class="aaa">where</span> wildAnimals = [<span class="a1">"Bear"</span>, <span class="a1">"Tiger"</span>, <span class="a1">"Lion"</span>, <span class="a1">"Wolf"</span>]</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span class="aaa">if</span> <span>thisIsAWildAnimal</span> <span class="a1">"Cat"</span> <span class="aaa">then</span> <span class="a1">"Yes!"</span> <span class="aaa">else</span> <span class="a1">"No!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь функция <span class="SourceText">elem</span>, записанная в инфиксной форме<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn15" id="bodyftn15" class="pcalibre pcalibre1">15</a></span>, проверяет наличие строки <span class="SourceText">Cat</span> в списке диких животных.</p>
+    <p class="calibre16">Стандартная библиотека Haskell позволяет делать со списком самые разные вещи, такие как получение минимального значения, вычисления суммы элементов, извлечение части списка, проверка на пустоту и равенство и так далее и в том же духе.</p>
+    <h3 id="toc59" class="calibre22">Неизменность списка</h3>
+    <p class="calibre16">Как вы знаете, все значения в Haskell неизменны, как Египетские пирамиды. Списки — не исключение: мы не можем изменить список, мы можем лишь создать на его основе новый список. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addNewHostToFront</span> :: <span class="aaaa">String</span> -&gt; [<span class="aaaa">String</span>] -&gt; [<span class="aaaa">String</span>]</p>
+    <p class="aa"><span>addNewHostToFront</span> newHost listOfHosts = newHost : listOfHosts</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> $ <span>addNewHostToFront</span> <span class="a1">"124.67.54.90"</span> listOfHosts</p>
+    <p class="aa">    <span class="aaa">where</span> listOfHosts = [<span class="a1">"45.67.78.89"</span>, <span class="a1">"123.45.65.54"</span>, <span class="a1">"127.0.0.1"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["124.67.54.90","45.67.78.89","123.45.65.54","127.0.0.1"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">С концептуальной точки зрения функция <span class="SourceText">addNewHostToFront</span> добавила новый адрес в начало переданного ей списка. Но в действительности никакого добавления не произошло: функция просто взяла элемент <span class="SourceText">newHost</span> и список <span class="SourceText">listOfHosts</span> и создала на их основе новый список, содержащий уже четыре адреса вместо трёх.</p>
+    <h3 id="toc60" class="calibre22">Действия над элементами</h3>
+    <p class="calibre16">Мы создаём список для того, чтобы что-то делать с его элементами. Например, такая функция:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>removeAllEmptyNamesFrom</span> :: [<span class="aaaa">String</span>] -&gt; [<span class="aaaa">String</span>]</p>
+    <p class="aa"><span>removeAllEmptyNamesFrom</span> listOfNames =</p>
+    <p class="aa">    <span>filter</span> <span>notEmptyName</span> listOfNames</p>
+    <p class="aa">    <span class="aaa">where</span> <span>notEmptyName</span> = <span>not</span> . <span>null</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> $ <span>removeAllEmptyNamesFrom</span> listOfNames</p>
+    <p class="aa">    <span class="aaa">where</span> listOfNames = [<span class="a1">"John"</span>, <span class="a1">""</span>, <span class="a1">"Ann"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Стандартная функция <span class="SourceText">filter</span> последовательно применяет предикат <span class="SourceText">notEmptyName</span> к каждой строке в списке и конструирует новый список лишь из тех строк, которые удовлетворяют этому предикату. В качестве предиката выступает функция, применяющаяся к одному аргументу и возвращающая значение <span class="SourceText">True</span> только в том случае, если он не <span class="SourceText">null</span>. Обратите внимание, мы вновь использовали короткую форму записи функции  </p>
+    <p class="calibre16">Вот и всё. Помимо функций <span class="SourceText">map</span> и <span class="SourceText">filter</span>, в стандартной библиотеке Haskell есть и другие вкусности для работы с элементами (проверки, замены, сортировки, перестановки и тому подобное).</p>
+    </body>
+</html>

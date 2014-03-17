@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc185" class="calibre8">Про hlint</h2>
+    <p class="calibre16">Haskell, как и другие языки программирования, достаточно гибок в синтаксисе, поэтому многие конструкции мы можем записать по-разному. И есть одна утилита, которая может помочь нам в выборе. Речь пойдёт о <span class="SourceText">hlint</span>.</p>
+    <p class="calibre16">Эта утилита живёт в Hackage<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn28" id="bodyftn28" class="pcalibre pcalibre1">29</a></span>, поэтому устанавливаем её мы точно так же, как и остальные пакеты:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal install hlint</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Немного терпения — и готово. Там будет много текста, сообщающего вам о процессе сборки утилиты, а в конце вы увидите строку наподобие этой:</p>
+    <p class="calibre16"> </p>
+    <p class="a">The executable file has been installed at</p>
+    <p class="a">/Users/dshevchenko/Library/Haskell/ghc-7.6.3/lib/hlint-1.8.57/bin/hlint</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Для удобства сделаем ссылку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">ln -s /Users/dshevchenko/Library/Haskell/ghc-7.6.3/lib/hlint-1.8.57/bin/hlint /usr/local/bin/hlint</p>
+    <h3 id="toc186" class="calibre22">Что нам с ней делать</h3>
+    <p class="calibre16">Утилита <span class="SourceText">hlint</span> — наш верный консультант. Она анализирует исходный код наших файлов и говорит: «Да, неплохо, но почему бы вам не улучшить свой код и не написать вот так?»</p>
+    <p class="calibre16">Пусть в нашем <span class="SourceText">Main.hs</span> находится такой код:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ (<span>show</span> 19) ++ (<span>show</span> 81)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь спросим совета у <span class="SourceText">hlint</span>. Для этого перейдём в корень проекта и выполним:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ hlint src/Main.hs</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И вот что скажет нам наш консультант:</p>
+    <p class="calibre16"> </p>
+    <p class="a">src/Main.hs:88:19: Warning: Redundant bracket</p>
+    <p class="a">Found:</p>
+    <p class="a">  (show 19) ++ (show 81)</p>
+    <p class="a">Why not:</p>
+    <p class="a">  show 19 ++ (show 81)</p>
+    <p class="a"> </p>
+    <p class="a">src/Main.hs:88:19: Warning: Redundant bracket</p>
+    <p class="a">Found:</p>
+    <p class="a">  (show 19) ++ (show 81)</p>
+    <p class="a">Why not:</p>
+    <p class="a">  (show 19) ++ show 81</p>
+    <p class="a"> </p>
+    <p class="a">2 suggestions</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами два предложения по улучшению нашего кода. Объяснение предельно понятное: <span class="SourceText">Redundant bracket</span>. И действительно, круглые скобки вокруг <span class="SourceText">show</span> совершенно не нужны. Последуем доброму совету и уберём их:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> 19 ++ <span>show</span> 81</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И если вновь cпросить совета у <span class="SourceText">hlint</span>, ответ будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">No suggestions</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Больше рекомендаций нет.</p>
+    <h3 id="toc187" class="calibre22">Рекурсивно</h3>
+    <p class="calibre16">В вашем реальном проекте, где будет много файлов, удобнее использовать рекурсивный прогон <span class="SourceText">hlint</span> по всему проекту. Для этого просто укажите путь к каталогу с исходниками:</p>
+    <p class="calibre16"> </p>
+    <p class="a">hlint src/</p>
+    <h3 id="toc188" class="calibre22">Предупреждения и ошибки</h3>
+    <p class="calibre16">Если внимательно проанализировать советы, выдаваемые <span class="SourceText">hlint</span>, можно увидеть тип каждой из рекомендаций. Некоторые идут как предупреждения:</p>
+    <p class="calibre16"> </p>
+    <p class="a">src/Main.hs:88:19: Warning: Redundant bracket </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">в то время как другие идут уже как ошибка:</p>
+    <p class="calibre16"> </p>
+    <p class="a">src/Utils/Files.hs:10:1: Error: Redundant lambda</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Нет, это не ошибка синтаксиса. Код прекрасно скомпилируется и будет правильно работать. Однако настоятельно рекомендую вам внимательно прислушиваться к советам <span class="SourceText">hlint</span>, особенно к имеющим тип <span class="SourceText">Error</span>. И это не только советы в отношении ненужных скобок или избыточной «лямбдности». <span class="SourceText">hlint</span> скажет вам и о повторном импортировании одного и того же модуля, и о явном дубляже кода, и о некоторых других проблемах.</p>
+    <p class="calibre16">Кстати, при написании этой книги <span class="SourceText">hlint</span> очень помогла мне. Возьмите и вы за правило периодически обращаться за советами к этому умному консультанту.</p>
+    </body>
+</html>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc132" class="calibre8">Монады: на примере IO</h2>
+    <p class="calibre16">Раз уж монады <span class="SourceText">IO</span> самые распространённые, и ни одно приложение не может без них обойтись, дальнейшие рассуждения о монадах продолжим на их примере.</p>
+    <h3 id="toc133" class="calibre22">Класс типов <span class="calibre28">Monad</span></h3>
+    <p class="calibre16">Все монады представлены в лице класса типов <span class="SourceText">Monad</span>. Вот из чего он состоит:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Monad</span> m <span class="aaa">where</span></p>
+    <p class="aa">    (&gt;&gt;=)  :: m a -&gt; (a -&gt; m b) -&gt; m b </p>
+    <p class="aa">    (&gt;&gt;)   :: m a -&gt; m b -&gt; m b </p>
+    <p class="aa">    <span>return</span> :: a -&gt; m a </p>
+    <p class="aa">    <span>fail</span>   :: <span class="aaaa">String</span> -&gt; m a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Поскольку мы решили использовать в качестве примера монаду <span class="SourceText">IO</span>, для наглядности заменим полиморфный тип <span class="SourceText">m</span> реальным:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Monad IO</span> <span class="aaa">where</span></p>
+    <p class="aa">    (&gt;&gt;=)  :: <span class="aaaa">IO</span> a -&gt; (a -&gt; <span class="aaaa">IO</span> b) -&gt; <span class="aaaa">IO</span> b </p>
+    <p class="aa">    (&gt;&gt;)   :: <span class="aaaa">IO</span> a -&gt; <span class="aaaa">IO</span> b -&gt; <span class="aaaa">IO</span> b </p>
+    <p class="aa">    <span>return</span> :: a -&gt; <span class="aaaa">IO</span> a </p>
+    <p class="aa">    <span>fail</span>   :: <span class="aaaa">String</span> -&gt; <span class="aaaa">IO</span> a</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вспоминая пример с Unix-каналом, мы теперь понимаем, что <span class="SourceText">IO</span>-действие — это монадическая обёртка для результатов функций, взаимодействующих с внешним миром.</p>
+    <p class="calibre16">Исследуем эти четыре метода.</p>
+    <h3 id="toc134" class="calibre22">Компоновка</h3>
+    <p class="calibre16">Метод <span class="SourceText">(&gt;&gt;=)</span> — это оператор последовательной компоновки (sequentially composition). Иногда его ещё называют оператором связывания (bind). Именно этот оператор играет роль Unix-канала из нашей иллюстрации: он связывает два <span class="SourceText">IO</span>-действия воедино, извлекая результат, возвращённый левым действием, и передавая его в качестве аргумента правому действию.</p>
+    <p class="calibre16">Рассмотрим объявление этого метода:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(&gt;&gt;=)  :: <span class="aaaa">IO</span> a -&gt; (a -&gt; <span class="aaaa">IO</span> b) -&gt; <span class="aaaa">IO</span> b </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Первый аргумент — это <span class="SourceText">IO</span>-действие, которое, выполнив свою работу, вернёт значение некоторого типа <span class="SourceText">a</span>. Второй аргумент — это функция, принимающая значение типа <span class="SourceText">a</span> в качестве аргумента и возвращающая <span class="SourceText">IO</span>-действие, которое, выполнив свою работу, вернёт значение некоторого типа <span class="SourceText">b</span>. А чтобы стало понятнее, позвольте мне прямо сейчас разоблачить <span class="SourceText">do</span>-нотацию.</p>
+    <p class="calibre16">Ключевое слово <span class="SourceText">do</span> — это всего лишь синтаксический сахар для монадических операторов. Возьмём простейших пример двух последовательных действий:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    text &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"You said '"</span> ++ text ++ <span class="a1">"'"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А вот как этот код выглядит «по-настоящему», без <span class="SourceText">do</span>-нотации:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>getLine</span> &gt;&gt;= \text -&gt; <span>putStrLn</span> $ <span class="a1">"You said '"</span> ++ text ++ <span class="a1">"'"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь всё встало на свои места:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">getLine    &gt;&gt;=  \text   -&gt; putStrLn $ "You said '" ++ text ++ "'"</p>
+    <p class="aa"> </p>
+    <p class="aa">IO String  &gt;&gt;=  (String -&gt; IO ())</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Когда «запускается» функция <span class="SourceText">getLine</span>, возвращающая <span class="SourceText">IO</span>-монаду, содержащую полученную от пользователя строку, оператор <span class="SourceText">(&gt;&gt;=)</span> вытаскивает эту строку из монады и сразу же передаёт её в качестве аргумента λ-функции, «запускающей» функцию <span class="SourceText">putStrLn</span>, которая в свою очередь вернёт другую <span class="SourceText">IO</span>-монаду.</p>
+    <p class="calibre16">Это именно то, что мы наблюдали в нашем примере с Unix-каналом:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ ls | grep xml</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">getLine</span> заняла место утилиты <span class="SourceText">ls</span>, а λ-функция заняла место утилиты <span class="SourceText">grep</span>.</p>
+    <h3 id="toc135" class="calibre22">Затем</h3>
+    <p class="calibre16">Монадический оператор <span class="SourceText">(&gt;&gt;)</span> — это оператор «затем» (then). Это простейший случай связывания: действия связываются без извлечения значений.</p>
+    <p class="calibre16">Вот такое связывание с <span class="SourceText">do</span>-нотацией:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Denis"</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Shevchenko"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А вот — без неё:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> <span class="a1">"Denis"</span> &gt;&gt; <span>putStrLn</span> <span class="a1">"Shevchenko"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Именно поэтому этот оператор и называется «затем». Мы говорим: «Сначала выведи на экран имя, а <span class="calibre18">затем</span> — фамилию.» Никакой передачи значения здесь не происходит, ведь стоящая слева от оператора функция <span class="SourceText">putStrLn</span> возвращает пустое действие <span class="SourceText">IO ()</span>.</p>
+    <p class="calibre16">Если вспомнить аналогию с Unix-терминалом, это можно изобразить так:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ whoami ; pwd</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Оператор связки команд (command concatenator), представленный точкой с запятой — это и есть подобие оператора «затем». Сначала запускается <span class="SourceText">whoami</span>, а затем запускается <span class="SourceText">pwd</span>, никакой передачи значения слева направо тут нет.</p>
+    <h3 id="toc136" class="calibre22">return</h3>
+    <p class="calibre16">Метод <span class="SourceText">return</span> вам уже знаком. Теперь мы понимаем, что английское слово «return» хорошо отражает действие этой функции: она возвращает значение в монадическую обёртку. Вспомните наш пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainTextFromUser</span> :: <span class="aaaa">IO String</span></p>
+    <p class="aa"><span>obtainTextFromUser</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Enter your text, please: "</span></p>
+    <p class="aa">    firstText &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>return</span> $ <span class="a1">"'"</span> ++ firstText ++ <span class="a1">"'"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">getLine</span> вернёт нам монаду, из которой оператор компоновки вытащит введённую пользователем строку. Эта строка поступит на вход λ-функции, которая в свою очередь создаст новую строку на основе строки, введённой пользователем, после чего — внимание! — функция <span class="SourceText">return</span> <span class="calibre18">вернёт</span> эту новоиспечённую строку обратно в <span class="SourceText">IO</span>-монаду. Вытащили значение из монады, что-то с ним сделали, а потом вернули в монаду.</p>
+    <p class="calibre16">Вы спросите, в чём же разница между <span class="SourceText">return</span> и упомянутой ранее <span class="SourceText">evaluate</span>? Разница в том, что функция <span class="SourceText">evaluate</span> заворачивает значение исключительно в монаду <span class="SourceText">IO</span>, в то время как функция <span class="SourceText">return</span> — в любую монаду, в зависимости от контекста. Рассматривайте <span class="SourceText">evaluate</span> как частный случай <span class="SourceText">return</span> для <span class="SourceText">IO</span>.</p>
+    <h3 id="toc137" class="calibre22">fail</h3>
+    <p class="calibre16">О методе <span class="SourceText">fail</span> мы говорить не будем. Во-первых, этот метод не имеет отношения к концептуальной сути монад. А во-вторых, поговаривают, будто в стандарте Haskell 2014 этот метод будет вообще убран из класса <span class="SourceText">Monad</span>.</p>
+    <p class="calibre16">Вот и всё. Теперь вы знаете простую суть монад. В принципе, монадический механизм — это всего лишь паттерн проектирования, унифицирующий процесс связывания вычислений.</p>
+    <p class="calibre16">Перейдём к практическим примерам.</p>
+    </body>
+</html>

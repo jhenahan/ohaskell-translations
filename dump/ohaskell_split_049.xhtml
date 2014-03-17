@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc176" class="calibre8">Про апостроф</h2>
+    <p class="calibre16">Есть в Haskell одна особенность, связанная с именованием. Признаюсь, я удивился, когда о ней узнал. Оказывается, частью имени любой программной сущности может выступать апостроф. Да-да, та самая одинарная кавычка, в которую мы помещаем отдельный символ <span class="SourceText">Char</span>.</p>
+    <p class="calibre16">Мы можем использовать один или более апострофов в имени функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>strangeFunction'</span> :: <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="aa"><span>strangeFunction'</span> arg = arg</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">в имени типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Strange_'type'</span> = <span class="aaaa">Strange_'type' String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">в имени класса типов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Stran''geClass''</span> a <span class="aaa">where</span></p>
+    <p class="aa">    <span>fmethod</span> :: a -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и даже в имени значения:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">strangeValue''' :: <span class="aaaa">Integer</span></p>
+    <p class="aa">strangeValue''' = 123</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На мой взгляд, нет никакого рационального зерна в том, чтобы включать апостроф в какое-либо имя. Тем более что такой символ разрывает текстовую целостность слова<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn27" id="bodyftn27" class="pcalibre pcalibre1">28</a></span>. Однако существует практика, в соответствии с которой имя с апострофом в конце используется как «промежуточное имя». Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">...</p>
+    <p class="aa"><span class="aaa">let</span> path = <span class="a1">"/usr/local/"</span></p>
+    <p class="aa">    path' = path ++ <span class="a1">"lib/"</span></p>
+    <p class="aa">...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Впрочем, на мой взгляд лучше написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">...</p>
+    <p class="aa"><span class="aaa">let</span> path = <span class="a1">"/usr/local/"</span></p>
+    <p class="aa">    pathWithLib = path ++ <span class="a1">"lib/"</span></p>
+    <p class="aa">...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако, раз уж практика апострофного именования имеет место, вы должны знать о ней. Хотя бы для того, чтобы сопровождать чужой код.</p>
+    </body>
+</html>

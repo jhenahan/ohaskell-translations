@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc69" class="calibre8">List comprehension</h2>
+    <p class="calibre16">Не удивляйтесь, что название этой главы не переведено на русский. Корректный перевод понятия «list comprehension» я так и не смог подобрать, долго размышлял — и в итоге решил оставить как есть.</p>
+    <p class="calibre16">Речь пойдёт об одной хитрой конструкции, предназначенной для прохода по элементам списка(ов) и применения к ним некоторых действий. Да-да, это похоже на уже известные нам функции <span class="SourceText">map</span> и <span class="SourceText">filter</span>, но есть некоторые дополнительные вкусности.</p>
+    <h3 id="toc70" class="calibre22">Хитрый список</h3>
+    <p class="calibre16">Вот как это выглядит:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе получим:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"HTTP"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Рассмотрим поближе:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы видим квадратные скобки... То есть перед нами список? Не совсем. Можно сказать, что перед нами генератор списка. Скелет такой конструкции можно представить так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[OPERATION ELEM | ELEM &lt;- LIST]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">где <span class="SourceText">LIST</span> — список, <span class="SourceText">ELEM</span> — элемент этого списка, а <span class="SourceText">OPERATION</span> — действие, применяемое к каждому элементу. Мы говорим: «Возьми список <span class="SourceText">LIST</span>, последовательно пройдись по всем его элементам и примени к каждому из них функцию <span class="SourceText">OPERATION</span>.» В результате значения, возвращаемые функцией <span class="SourceText">OPERATION</span>, породят новый список.</p>
+    <p class="calibre16">В данном случае мы пройдём по всем символам строки <span class="SourceText">http</span> и применим к каждому из её символов функцию <span class="SourceText">toUpper</span>, которая в свою очередь переведёт этот символ в верхний регистр. В результате мы получим новую строку <span class="SourceText">HTTP</span>.</p>
+    <h3 id="toc71" class="calibre22">Добавляем предикат</h3>
+    <p class="calibre16">Мы можем добавить предикат в эту конструкцию. Тогда её скелет станет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[OPERATION ELEM | ELEM &lt;- LIST, PREDICATE]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В этом случае мы говорим: «Возьми список <span class="SourceText">LIST</span>, последовательно пройдись по всем его элементам и примени функцию <span class="SourceText">OPERATION</span> только к тем элементам, которые удовлетворят предикату <span class="SourceText">PREDICATE</span>.»</p>
+    <p class="calibre16">Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>, c == <span class="a1">'t'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе будет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"TT"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы прошлись по всем четырём символам строки <span class="SourceText">http</span>, но функция <span class="SourceText">toUpper</span> была применена только к тем символам, которые удовлетворили предикату <span class="SourceText">c == 't'</span>. Именно поэтому на выходе мы получили строку из двух символов, ибо только они удовлетворили этому предикату.</p>
+    <p class="calibre16">Предикатов, кстати, может быть несколько. Например, так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Data.Char</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>, c /= <span class="a1">'h'</span>, c /= <span class="a1">'p'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод в этом случае будет таким же:</p>
+    <p class="calibre16"> </p>
+    <p class="a">"TT"</p>
+    <p class="calibre16">Здесь два предиката, <span class="SourceText">c /= 'h'</span> и <span class="SourceText">c /= 'p'</span>. Они соединяются в единый предикат через логическое «И», поэтому мы можем написать и так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>, c /= <span class="a1">'h'</span> &amp;&amp; c /= <span class="a1">'p'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат будет таким же.</p>
+    <p class="calibre16">Обратите внимание на комбинацию символов <span class="SourceText">/=</span>. Это оператор «не равно», аналог оператора <span class="SourceText">!=</span> в языке C. Кстати, он тоже носит математический окрас. Сравните:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">/=   - Haskell-форма</p>
+    <p class="aa">≠    - математическая форма</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Симпатично, не правда ли? Прямое сходство, мы лишь передвинули перечеркивающую косую палочку.</p>
+    <h3 id="toc72" class="calibre22">Больше списков</h3>
+    <p class="calibre16">Мы можем использовать эту конструкцию для совместной работы с несколькими списками. Скелет в этом случае будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">[OPERATION_with_ELEMs | ELEM1 &lt;- LIST1, ..., ELEMN &lt;- LISTN ]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы работаем сразу с <span class="SourceText">N</span> списками, а <span class="SourceText">OPERATION_with_ELEMs</span> представляет собой функцию, в которую передаются все элементы наших списков. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> [prefix ++ name | name &lt;- names, prefix &lt;- namePrefix]</p>
+    <p class="aa">    <span class="aaa">where</span> names = [<span class="a1">"James"</span>, <span class="a1">"Victor"</span>, <span class="a1">"Denis"</span>, <span class="a1">"Michael"</span>]</p>
+    <p class="aa">          namePrefix = [<span class="a1">"Mr. "</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе получим:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Mr. James","Mr. Victor","Mr. Denis","Mr. Michael"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы последовательно прошлись по всем элементам списков <span class="SourceText">names</span> и <span class="SourceText">namePrefix</span>.</p>
+    <p class="calibre16">Обратите внимание, в списке <span class="SourceText">namePrefix</span> лишь один префикс. Вот что будет, если префиксов два:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> [prefix ++ name | name &lt;- names, prefix &lt;- namePrefix]</p>
+    <p class="aa">    <span class="aaa">where</span> names = [<span class="a1">"James"</span>, <span class="a1">"Victor"</span>, <span class="a1">"Denis"</span>, <span class="a1">"Michael"</span>]</p>
+    <p class="aa">          namePrefix = [<span class="a1">"Mr. "</span>, <span class="a1">"sir "</span>]  <span class="aa1">-- Теперь префиксов два</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В этом случае на выходе будет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Mr. James","sir James","Mr. Victor","sir Victor","Mr. Denis","sir Denis","Mr. Michael","sir Michael"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы последовательно использовали каждый элемент из списка <span class="SourceText">names</span> <span class="calibre18">и</span> каждый элемент из списка <span class="SourceText">namePrefix</span>.</p>
+    <h3 id="toc73" class="calibre22">Добавляем условие</h3>
+    <p class="calibre16">Предикат не всегда применим к элементам списка. В ряде случаев нам нужно условие. Добавим его:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span>print</span> [<span class="aaa">if</span> car == <span class="a1">"Bentley"</span> <span class="aaa">then</span> <span class="a1">"Wow!"</span> <span class="aaa">else</span> <span class="a1">"Good!"</span> | car &lt;- cars]</p>
+    <p class="aa">    <span class="aaa">where</span> cars = [<span class="a1">"Mercedes"</span>,</p>
+    <p class="aa">                  <span class="a1">"BMW"</span>,</p>
+    <p class="aa">                  <span class="a1">"Bentley"</span>,</p>
+    <p class="aa">                  <span class="a1">"Audi"</span>,</p>
+    <p class="aa">                  <span class="a1">"Bentley"</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["Good!","Good!","Wow!","Good!","Wow!"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы прошлись по списку марок автомобилей и применили к каждой из них условие, которое вернуло строку <span class="SourceText">"Wow!"</span> или строку <span class="SourceText">"Good!"</span>.</p>
+    <h3 id="toc74" class="calibre22">Добавляем локальное выражение</h3>
+    <p class="calibre16">Мы можем добавить сюда и локальное выражение с помощью уже известного нам <span class="SourceText">let</span>. Например так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>toUpper</span> c | c &lt;- <span class="a1">"http"</span>,</p>
+    <p class="aa">                          <span class="aaa">let</span> hletter = <span class="a1">'h'</span> <span class="aaa">in</span> c /= hletter]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Промежуточное значение может быть использовано во избежание дубляжа при наличии нескольких предикатов.</p>
+    <h3 id="toc75" class="calibre22">Пример</h3>
+    <p class="calibre16">Разберём более практичный пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.String.Utils</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>checkGooglerBy</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>checkGooglerBy</span> email = </p>
+    <p class="aa">    <span class="aaa">if</span> email <span>`endsWith`</span> <span class="a1">"gmail.com"</span></p>
+    <p class="aa">    <span class="aaa">then</span> <span>nameFrom</span> email ++ <span class="a1">" is a Googler!" </span></p>
+    <p class="aa">    <span class="aaa">else</span> email</p>
+    <p class="aa">    <span class="aaa">where</span> <span>endsWith</span> str suffix = <span>endswith</span> suffix str</p>
+    <p class="aa">          <span>nameFrom</span> fullEmail = <span>takeWhile</span> (/= <span class="a1">'@'</span>) fullEmail</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> [<span>checkGooglerBy</span> email | email &lt;- [<span class="a1">"adam@gmail.com"</span>,</p>
+    <p class="aa">                                               <span class="a1">"bob@yahoo.com"</span>,</p>
+    <p class="aa">                                               <span class="a1">"richard@gmail.com"</span>,</p>
+    <p class="aa">                                               <span class="a1">"elena@yandex.ru"</span>,</p>
+    <p class="aa">                                               <span class="a1">"denis@gmail.com"</span>]]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">["adam is a Googler!","bob@yahoo.com","richard is a Googler!","elena@yandex.ru","denis is a Googler!"]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы проанализировали список email-адресов, и заменили все gmail-адреса фразой, начинающейся с имени пользователя. А теперь по шагам.</p>
+    <p class="calibre16">Из уже знакомого нам модуля <span class="SourceText">Data.String.Utils</span> мы возьмём функцию <span class="SourceText">endswith</span>, проверяющую, завершается ли одна строка другой строкой. Для красивого инфиксного использования мы обернули её собственной функцией <span class="SourceText">endsWith</span>, в результате чего код приобретает литературно точный вид:</p>
+    <p class="aa"><span class="aaa">if</span> <span class="a1">"adam@gmail.com"</span> <span>`endsWith`</span> <span class="a1">"gmail.com"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь рассмотрим эту строку:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>takeWhile</span> (/= <span class="a1">'@'</span>) fullEmail</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Скелет стандартной функции <span class="SourceText">takeWhile</span> можно отобразить так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">takeWhile PREDICATE LIST</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы говорим: «Последовательно забирай (take) элементы из списка <span class="SourceText">LIST</span> до тех пор (While), пока <span class="SourceText">PREDICATE</span>, применённый к этим элементам, возвращает <span class="SourceText">True</span>. Если наткнёшься на элемент, не соответствующий этому предикату, прекращай работу и возвращай список из ранее полученных элементов.» Мы хотим извлечь имя пользователя из его email-адреса, а значит, мы бежим по email до тех пор, пока символы не равны <span class="SourceText">'@'</span>, что и отражается предикатом <span class="SourceText">(/= '@')</span>. Как только натыкаемся на собачку — возвращаем всё, находящееся перед ней.</p>
+    <p class="calibre16">Вот и всё. Теперь вы знаете, что такое list comprehension и как его можно использовать в вашем коде.</p>
+    </body>
+</html>

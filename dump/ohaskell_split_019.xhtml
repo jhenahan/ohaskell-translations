@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc47" class="calibre8">Функции высшего порядка</h2>
+    <p class="calibre16">Функции высшего порядка (higher-order functions) занимают важное место в языке Haskell. Из предыдущих глав вы узнали, что чистые функции — это, в конечном итоге, значения. Следовательно, чистые функции можно, во-первых, передавать другим функциям в качестве аргументов, а во-вторых, возвращать их из других функций. </p>
+    <p class="calibre16">Функцией высшего порядка называют такую функцию, которая принимает другую функцию в качестве аргумента и/или возвращает другую функцию.</p>
+    <h3 id="toc48" class="calibre22">Разоблачение функций</h3>
+    <p class="calibre16">Помните, в рассказе о чистых функциях было упомянуто, что они могут принимать как один, так и множество аргументов? Пришло время признаться в обмане, ибо правда такова:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre24">Чистые функции в Haskell всегда принимают только один аргумент.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Да, но как же мы тогда смогли определить функции, принимающие по два и даже по три аргумента?</p>
+    <p class="calibre16">Это была хитрость, и называется она «каррирование» (currying), иногда говорят «карринг». Слово это знаменитое, ибо происходит от имени Haskell Curry<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn12" id="bodyftn12" class="pcalibre pcalibre1">12</a></span>. Каррирование — это превращение функции, принимающей множество аргументов, в функцию, принимающую все эти аргументы по одному.</p>
+    <p class="calibre16">Определим функцию деления двух чисел:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>divide</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="aa"><span>divide</span> arg1 arg2 = arg1 / arg2</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция принимает два значения стандартного типа <span class="SourceText">Double</span> и возвращает результат деления первого значения на второе. Всё предельно просто. Но если мы заглянем «под капот» вызова этой функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> (<span>divide</span> 10.03 2.1)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">то узнаем, что этот вызов происходит в <span class="calibre18">два</span> этапа:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">Функция <span class="SourceText">divide</span> применяется к первому аргументу <span class="SourceText">10.03</span> и — внимание! — возвращает функцию типа <span class="SourceText">Double -&gt; Double</span>.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Эта возвращённая функция, в свою очередь, применяется ко второму аргументу <span class="SourceText">2.1</span> и возвращает конечное значение <span class="SourceText">4.77</span>.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Мы можем явно отразить эту «двухэтапность», переписав вызов функции так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(<span>divide</span> 10.03) 2.1</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция применяется только к одному значению: сначала к <span class="SourceText">10.03</span>, а уже потом функция, возвращённая первым вызовом, применяется к <span class="SourceText">2.1</span>.</p>
+    <p class="calibre16">Именно по причине такой «двухэтапности» объявление функции divide содержит две стрелочки вместо одной:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>divide</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">С концептуальной точки зрения такое объявление звучит так: «Функция <span class="SourceText">divide</span> принимает два значения типа <span class="SourceText">Double</span> и возвращает значение типа <span class="SourceText">Double</span>.» Однако правильнее читать его так: «Функция <span class="SourceText">divide</span> применяется к первому значению типа <span class="SourceText">Double</span> и возвращает функцию типа <span class="SourceText">Double -&gt; Double</span>, которая применяется ко второму значению типа <span class="SourceText">Double</span> и возвращает конечное значение типа <span class="SourceText">Double</span>.»</p>
+    <p class="calibre16">Правильное прочтение объявления можно отразить и в самом этом объявлении:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>divide</span> :: <span class="aaaa">Double</span> -&gt; (<span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь мы ясно видим, что на первом этапе происходит вызов функции от одного аргумента, возвращающей функцию типа <span class="SourceText">Double -&gt; Double</span>, а на втором этапе происходит вызов второй функции, возвращённой на первом этапе.</p>
+    <p class="calibre16">По аналогии, если у нас есть функция, принимающая три аргумента:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>totalSum</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="aa"><span>totalSum</span> arg1 arg2 arg3 = arg1 + arg2 + arg3</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">то её вызов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> (<span>totalSum</span> 10.03 2.1 45.7)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">проходил бы в три этапа, и чтобы явно отразить этот факт, мы можем переписать объявление данной функции так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>totalSum</span> :: <span class="aaaa">Double</span> -&gt; (<span class="aaaa">Double</span> -&gt; (<span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span>))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">а её вызов — так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">((<span>totalSum</span> 10.03) 2.1) 45.7</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И чтобы всё окончательно прояснилось, изучим одну важную деталь.</p>
+    <h3 id="toc49" class="calibre22">Частичное применение функции</h3>
+    <p class="calibre16">Несмотря на «двухэтапность» вызова функции <span class="SourceText">divide</span>, её тело будет выполнено один раз. Вызов один, просто он разделён на два последовательных шага. А чтобы понять суть этих шагов, изучим <span class="calibre18">частичное применение</span> функции (partial application).</p>
+    <p class="calibre16">Функцию называют частично применённой, если количество аргументов, к которым она применена, оказалось меньше ожидаемого ею количества аргументов. И здесь нам пригодятся уже известные нам λ-функции.</p>
+    <p class="calibre16">Применим функцию <span class="SourceText">divide</span> не к двум, а только к одному аргументу:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span class="aaa">let</span> <span>temporaryFunction</span> = <span>divide</span> 10.03  <span class="aa1">-- "Запомнили" первое значение...</span></p>
+    <p class="aa">    <span class="aaa">in</span> </p>
+    <p class="aa">    <span>print</span> (<span>temporaryFunction</span> 2.1)   <span class="aa1">-- А вот теперь можем выполнить работу.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь всё встало на свои места. Здесь наглядно показано, что же на самом деле означает выражение вида:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">(<span>divide</span> 10.03) 2.1</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В результате первого вызова, когда мы применили функцию <span class="SourceText">divide</span> к первому аргументу, мы ещё не можем получить результат деления, ведь второго-то аргумента ещё нет! Вместо этого мы получили временную λ-функцию, которую для наглядности ассоциировали с выражением <span class="SourceText">temporaryFunction</span>. Эта временная λ-функция как бы запомнила значение первого аргумента, и только когда мы применим её ко второму аргументу, мы и получим результат деления.</p>
+    <p class="calibre16">По аналогии, вызов нашей функции <span class="SourceText">totalSum</span>, который происходит в три этапа, можно разложить так:</p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span class="aaa">let</span> <span>firstFunction</span> = <span>totalSum</span> 1.0       <span class="aa1">-- "Запомнили" первый...</span></p>
+    <p class="aa">        <span>secondFunction</span> = <span>firstFunction</span> 2.0 <span class="aa1">-- "Запомнили" второй...</span></p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    <span>print</span> (<span>secondFunction</span> 3.0)  <span class="aa1">-- А вот теперь можем складывать.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В процессе вызова у нас появилось уже две временные λ-функции, каждая из которых применялась к очередному аргументу и запоминала его. И только когда вторая промежуточная λ-функция была применена к третьему, последнему аргументу, мы и получили сумму.</p>
+    <h3 id="toc50" class="calibre22">Зачем это нужно</h3>
+    <p class="calibre16">В подавляющем большинстве случаев знать вышеизложенную информацию о каррировании функций и о частичном применении не нужно. Главное преимущество такого подхода, при котором одна функция от нескольких аргументов раскладывается на цепочку функций от одного аргумента каждая, лежит в «академической плоскости»: проводить формальные математические доказательства гораздо легче, если договориться, что каждая из вычисляемых функций всегда принимает строго один аргумент и выдаёт строго одно значение.</p>
+    <p class="calibre16">Но нас с вами, как программистов-практиков, больше интересует аспект практический. И поэтому мы возвращаемся к рассмотрению функций высшего порядка (далее — ФВП).</p>
+    <p class="calibre16">Формально функции <span class="SourceText">divide</span> и <span class="SourceText">totalSum</span> являются ФВП, в силу тех самых промежуточных λ-функций. Фактически, все функции, принимающие более одного аргумента, являются ФВП. Но все эти промежуточные λ-функции — всего лишь «подкапотные» дела, они скрыты от наших глаз. Гораздо больший интерес для нас представляют «настоящие» ФВП, которые явно объявлены как принимающие на вход функциональные значения и/или возвращающие функциональные значения.</p>
+    <p class="calibre16">Рассмотрим небольшой пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">Login</span> = <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">Password</span> = <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">AvatarURL</span> = <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">UserId</span> = <span class="aaaa">Integer</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>userInfo</span> :: <span class="aaaa">Login</span> -&gt; <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>userInfo</span> login password avatarURL userId =</p>
+    <p class="aa">    <span class="a1">"Full info about user @"</span> ++ (show userId) ++ <span class="a1">":"</span> ++</p>
+    <p class="aa">    <span class="a1">"\n login: "</span> ++ login ++</p>
+    <p class="aa">    <span class="a1">"\n password: "</span> ++ password ++</p>
+    <p class="aa">    <span class="a1">"\n avatar URL: "</span> ++ avatarURL</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">EmptyInfo</span> = <span class="aaaa">Login</span> -&gt; <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">WithLogin</span> =          <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">AndWithPassword</span> =                <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">AndWithAvatarURL</span> =                            <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>storeLoginIn</span> :: <span class="aaaa">EmptyInfo</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">WithLogin</span></p>
+    <p class="aa"><span>storeLoginIn</span> emptyInfo userId =</p>
+    <p class="aa">    emptyInfo <span class="a1">"denis"</span></p>
+    <p class="aa">    <span class="aa1">{- В реальности логин будет получен </span></p>
+    <p class="aa">
+      <span class="aa1">       в соответствии с переданным userId -}</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>storePasswordIn</span> :: <span class="aaaa">WithLogin</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">AndWithPassword</span></p>
+    <p class="aa"><span>storePasswordIn</span> infoWithLogin userId =</p>
+    <p class="aa">    infoWithLogin <span class="a1">"123456789abc"</span></p>
+    <p class="aa">    <span class="aa1">{- В реальности пароль будет получен </span></p>
+    <p class="aa">
+      <span class="aa1">       в соответствии с переданным userId -}</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>storeAvatarURLIn</span> :: <span class="aaaa">AndWithPassword</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">AndWithAvatarURL</span></p>
+    <p class="aa"><span>storeAvatarURLIn</span> infoWithPassword userId =</p>
+    <p class="aa">    infoWithPassword <span class="a1">"http://dshevchenko.biz/denis_avatar.png"</span></p>
+    <p class="aa">    <span class="aa1">{- В реальности URL будет получен </span></p>
+    <p class="aa">
+      <span class="aa1">       в соответствии с переданным userId -}</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span class="aaa">let</span> userId = 1234</p>
+    <p class="aa">        <span>infoWithLogin</span> = <span>storeLoginIn</span> userInfo userId</p>
+    <p class="aa">        <span>infoWithPassword</span> = <span>storePasswordIn</span> <span>infoWithLogin</span> userId</p>
+    <p class="aa">        <span>infoWithAvatarURL</span> = <span>storeAvatarURLIn</span> <span>infoWithPassword</span> userId</p>
+    <p class="aa">        fullInfoAboutUser = <span>infoWithAvatarURL</span> userId</p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    <span>putStrLn</span> fullInfoAboutUser</p>
+    <p class="calibre16">А теперь разберём это хозяйство по косточкам.</p>
+    <p class="calibre16">Во-первых, появилась новая для нас конструкция:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">Login</span> = <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ключевое слово <span class="SourceText">type</span> добавляет псевдоним для уже известного типа. Теперь вместо типа <span class="SourceText">String</span> можно использовать идентификатор <span class="SourceText">Login</span>.</p>
+    <p class="calibre16">Далее мы определили функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>userInfo</span> :: <span class="aaaa">Login</span> -&gt; <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тут всё просто: функция <span class="SourceText">userInfo</span> ожидает на вход логин, пароль, адрес аватара и идентификатор пользователя, а на выходе выдаёт некую описывающую строку. Обратите внимание и на двойной плюс:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="a1">"\n login: "</span> ++ login</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это оператор конкатенации двух строк в одну.</p>
+    <p class="calibre16">А вот теперь начинается самое интересное. Подразумевается, что изначально у нас имеется только идентификатор пользователя, а соответствующие ему логин, пароль и путь к аватару нам нужно откуда-то получить. К счастью, у нас есть три функции, каждая из которых знает, где взять логин, пароль и путь к аватару соответственно. И каждая из этих трёх функций является ФВП.</p>
+    <p class="calibre16">Рассмотрим псевдонимы:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">EmptyInfo</span> = <span class="aaaa">Login</span> -&gt; <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">WithLogin</span> =          <span class="aaaa">Password</span> -&gt; <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">AndWithPassword</span> =                <span class="aaaa">AvatarURL</span> -&gt; <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">AndWithAvatarURL</span> =                            <span class="aaaa">UserId</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Каждый из них вводит упрощающее имя для функционального типа, образованного «урезанием» от типа функции <span class="SourceText">userInfo</span>. Обратите внимание: каждый последующий тип ожидает на один аргумент меньше, чем предыдущий тип. Эти псевдонимы задают типы для очередной промежуточной λ-функции, которые нужны, как вы уже догадались, для частичного применения функции <span class="SourceText">userInfo</span>.</p>
+    <p class="calibre16">Рассмотрим первый вызов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>infoWithLogin</span> = <span>storeLoginIn</span> userInfo userId</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы передаём функцию <span class="SourceText">userInfo</span> в качестве первого аргумента функции <span class="SourceText">storeLoginIn</span>, внутри которой мы применяем переданную функцию <span class="SourceText">userInfo</span> к единственному аргументу, а именно к логину. Соответственно, на выходе из функции <span class="SourceText">storeLoginIn</span> мы получаем первую промежуточную λ-функцию, в которой мы сохранили значение логина (именно поэтому тип этой λ-функции ассоциирован со словом <span class="SourceText">WithLogin</span>).</p>
+    <p class="calibre16">Далее следует вызов:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>infoWithPassword</span> = <span>storePasswordIn</span> <span>infoWithLogin</span> userId</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы передаём нашу промежуточную λ-функцию в качестве первого аргумента функции <span class="SourceText">storePasswordIn</span>. Эта функция, в свою очередь, применяет переданную ей λ-функцию к единственному аргументу, а именно к паролю. Таким образом, на выходе из функции <span class="SourceText">storePasswordIn</span> мы имеем вторую промежуточную λ-функцию, в которой сохранены уже два значения: полученный на предыдущем вызове логин и на этом вызове — пароль.</p>
+    <p class="calibre16">То же самое справедливо и для следующего вызова:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>infoWithAvatarURL</span> = <span>storeAvatarURLIn</span> <span>infoWithPassword</span> userId</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе из функции <span class="SourceText">storeAvatarURLIn</span> мы получаем третью λ-функцию, в которой сохранены уже три значения: логин, пароль и путь к аватару.</p>
+    <p class="calibre16">В итоге мы применяем эту третью λ-функцию к последнему нужному аргументу, а именно к идентификатору пользователя:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">fullInfoAboutUser = <span>infoWithAvatarURL</span> userId</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь и происходит «полноценный» вызов функции <span class="SourceText">userInfo</span>, в результате которого мы и получаем описывающую строку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Full info about user @1234:</p>
+    <p class="a"> login: denis</p>
+    <p class="a"> password: 123456789abc</p>
+    <p class="a"> avatar URL: http://dshevchenko.biz/denis_avatar.png</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Таким образом, функция <span class="SourceText">userInfo</span> была частично применена трижды, каждый раз получая очередной аргумент, и лишь к четвёртому применению она получила все необходимые ей аргументы. Это можно сравнить с конвейерной цепочкой, на каждом шаге которой эта функция получала очередной аргумент.</p>
+    <p class="calibre16">Впрочем, нужны ли были такие сложности? Ведь мы можем передавать в каждую из этих трёх функций только значение <span class="SourceText">userId</span>, а возвращать никакую не промежуточную λ-функцию, а непосредственно логин, пароль и адрес аватара соответственно. Например, вместо функции <span class="SourceText">storeLoginIn</span> можно определить функцию <span class="SourceText">obtainLogin</span> следующего вида:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainLogin</span> :: <span class="aaaa">UserId</span> -&gt; <span class="aaaa">Login</span></p>
+    <p class="aa"><span>obtainLogin</span> userId =</p>
+    <p class="aa">    <span class="aa1">-- Получаем откуда-то логин и просто возвращаем его.</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ну а что если мы не хотим возвращать логин в явном виде? Ведь в случае с частичным применением мы упаковываем логин в промежуточную λ-функцию (то есть фактически прячем логин в неё), а в этом случае мы явно возвращаем его на показ всему миру. Первое решение может оказаться более приемлемым.</p>
+    <p class="calibre16">Или другой пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">UserId</span> = <span class="aaaa">Integer</span></p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">Prefix</span> = <span class="aaaa">String</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>obtainLogin</span> :: <span class="aaaa">UserId</span> -&gt; (<span class="aaaa">Prefix</span> -&gt; <span class="aaaa">String</span>)</p>
+    <p class="aa"><span>obtainLogin</span> userId =</p>
+    <p class="aa">    <span>loginStorage</span> <span class="a1">"denis"</span> <span class="aa1">-- Подразумевается, что логин как-то получен.</span></p>
+    <p class="aa">    <span class="aaa">where</span> <span>loginStorage</span> login prefix = prefix ++ <span class="a1">": "</span> ++ login</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> =</p>
+    <p class="aa">    <span class="aaa">let</span> userId = 1234</p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    <span>putStrLn</span> ((<span>obtainLogin</span> userId) <span class="a1">"My login"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Рассмотрим функцию <span class="SourceText">obtainLogin</span> подробнее:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>obtainLogin</span> :: <span class="aaaa">UserId</span> -&gt; (<span class="aaaa">Prefix</span> -&gt; <span class="aaaa">String</span>)</p>
+    <p class="aa"><span>obtainLogin</span> userId =</p>
+    <p class="aa">    <span>loginStorage</span> <span class="a1">"denis"</span></p>
+    <p class="aa">    <span class="aaa">where</span> <span>loginStorage</span> login prefix = prefix ++ <span class="a1">": "</span> ++ login</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы, на основании полученного извне идентификатора пользователя, откуда-то извлекаем логин и сразу же прячем его в λ-функцию, тут же нами и созданную. В результате функция <span class="SourceText">obtainLogin</span> возвращает частично применённую функцию, которую мы вторично применяем к строке-префиксу — и в результате на выходе мы получаем готовый результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">My login: denis</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вас, вероятно, интересует, почему я сказал о λ-функции? Вроде бы здесь нет нашего знакомого backslash:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">where</span><span> loginStorage</span> login prefix = prefix ++ <span class="a1">": "</span> ++ login</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако это не важно, ведь такая запись идентична λ-форме:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">where </span><span>loginStorage</span> = \login prefix -&gt; prefix ++ <span class="a1">": "</span> ++ login</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Помните, выше я сказал, что тривиальную функцию лучше определять без объявления? Вот это тот самый случай.</p>
+    <p class="calibre16">Готово. Теперь вы знаете о функциях высшего порядка. Именно по причине того, что с функциями в Haskell можно работать как со значениями, мы можем составлять из них гибкие комбинации.</p>
+    </body>
+</html>

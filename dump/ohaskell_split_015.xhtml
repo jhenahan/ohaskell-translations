@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc30" class="calibre8">Лень</h2>
+    <p class="calibre16">Язык Haskell — ленивый. Это означает, что он никогда не сделает работу, результат которой никому не нужен.</p>
+    <h3 id="toc31" class="calibre22">Начнём с C++</h3>
+    <p class="calibre16">Допустим, нам нужен список из некоторого числа одинаковых IP-адресов. Да, в реальной жизни нам такое едва ли понадобится, но этот пример хорошо покажет нам суть ленивых вычислений.</p>
+    <p class="calibre16">Функция, возвращающая список адресов, на C++ может выглядеть так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">typedef</span> <span class="aaaa">std::vector</span>&lt;<span class="aaaa">std::string</span>&gt; <span class="aaaa">IPAddresses</span>;</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaaa">IPAddresses</span> <span>generate_addresses</span>( <span class="aaaa">size_t</span> howMany, </p>
+    <p class="aa">                                <span class="aaa">const</span> <span class="aaaa">std::string</span>&amp; address ) {</p>
+    <p class="aa">    <span class="aaa">const</span> <span class="aaaa">IPAddresses</span> addresses( howMany, address );</p>
+    <p class="aa">    <span class="aaa">return</span> addresses;</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь нам понадобилась функция, получающая заданное количество адресов из этого списка и выводящая их на экран. Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">void</span> <span>take_and_print</span>( <span class="aaaa">size_t</span> howMany, </p>
+    <p class="aa">                     <span class="aaa">const</span> <span class="aaaa">IPAddresses</span>&amp; addresses ) {</p>
+    <p class="aa">    <span class="aaa">for</span>( <span class="aaa">size_t</span> i = 0; i &lt; howMany; ++i ) {</p>
+    <p class="aa">        std::cout &lt;&lt; addresses[i] &lt;&lt; std::endl;</p>
+    <p class="aa">    }</p>
+    <p class="aa">}</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaaa">int</span> <span>main</span>() {</p>
+    <p class="aa">    <span>take_and_print</span>( 2, <span>generate_addresses</span>( 100, <span class="a1">"127.0.0.1"</span> ) );</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">take_and_print</span> получает список, возвращённый нашей функцией <span class="SourceText">generate_addresses</span>, а потом печатает первые два адреса из этого списка.</p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">127.0.0.1</p>
+    <p class="a">127.0.0.1</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И всё бы хорошо, но из 100 созданных строк фактически потребовались лишь первые две.  Оставшиеся 98 строк были созданы абсолютно напрасно. Было затрачено время, была затрачена память — и всё впустую.</p>
+    <p class="calibre16">Это — следствие строгости вычислений, присущей языку C++. Функция <span class="SourceText">generate_addresses</span> прямолинейна и сразу рвётся в бой. Сказали ей создать 100 адресов — получите 100. Скажут создать миллион — пожалуйста, вот вам миллион. Скажут миллиард — ну что ж, потерпите чуток, но будет вам и миллиард.</p>
+    <p class="calibre16">Тем временем функция <span class="SourceText">take_and_print</span> столь же прямолинейна, и ей абсолютно наплевать на усилия трудолюбивой функции <span class="SourceText">generate_addresses</span>. Если ей сказали отобразить лишь первые два элемента полученного контейнера, именно это она и сделает. И ей без разницы, сколько там ещё осталось элементов, десять или полмиллиарда.</p>
+    <p class="calibre16">Результатом строгости вычислений является лишняя работа. Но функции в Haskell, в отличие от своих трудолюбивых коллег из C++, терпеть не могут лишней работы.</p>
+    <h3 id="toc32" class="calibre22">А вот как в Haskell</h3>
+    <p class="calibre16">Откроем наш файл <span class="SourceText">Main.hs</span> и перепишем его:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> (<span>take</span> 2 (<span>replicate</span> 100 <span class="a1">"127.0.0.1"</span>))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">replicate</span> создаёт список из 100 адресов вида <span class="SourceText">127.0.0.1</span>, а функция <span class="SourceText">take</span> берёт 2 первых адреса из этого списка (о чём свидетельствует число 2, переданное ей в качестве первого аргумента). Функция <span class="SourceText">print</span> приводит это хозяйство к строковому виду и выводит на экран. Не обращайте внимания на синтаксические непонятности этого кода. В последующих главах они будут разъяснены в высшей степени подробно.</p>
+    <p class="calibre16">Весь фокус в том, что функция <span class="SourceText">replicate</span> создаёт список вовсе не из 100 адресов, а всего из двух. Почему? Потому что именно столько понадобилось функции <span class="SourceText">take</span>.</p>
+    <p class="calibre16">Функция <span class="SourceText">replicate</span> — лентяйка. Несмотря на то, что мы попросили её создать список из 100 строк, она смотрит по сторонам и думает: «Так-с, кому тут нужны мои строки? Ага, функции <span class="SourceText">take</span> нужны. И сколько же ей нужно? А-а, всего две. Ну так а чего я, глупая что ли, создавать сто строк, когда требуется всего две?! Вот тебе две строки и будь счастлива!»</p>
+    <p class="calibre16">Да, трудолюбие — это хорошо, а лень — это плохо, однако в данном случае мне более симпатична функция-лентяйка. Она, как хороший рационализатор, делает не столько, сколько её попросили, а столько, сколько реально нужно. В этом и заключается суть ленивых вычислений в Haskell.</p>
+    <p class="calibre16">Разумеется, если аппетиты функции <span class="SourceText">take</span> возрастут и она попросит первые пятьдесят элементов вместо первых двух, то функция <span class="SourceText">replicate</span> создаст список уже из 50 строк. Столько, сколько нужно, и ни капли больше.</p>
+    <p class="calibre16">Да, но откуда мы можем знать, что функция <span class="SourceText">replicate</span>  создаёт лишь столько IP-адресов, сколько потребовалось? А вдруг это не так? Давайте проверим.</p>
+    <p class="calibre16">Ленивость языка Haskell позволяет нам оперировать бесконечно большими списками. Нет, не просто очень большими, но именно бесконечными. Перепишем наш пример следующим образом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>print</span> (<span>take</span> 2 (<span>repeat</span> <span class="a1">"127.0.0.1"</span>))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">repeat</span> создаст бесконечно большой список IP-адресов, элементами которого будет переданный ей адрес <span class="SourceText">127.0.0.1</span>. И вот если бы наша трудолюбивая функция <span class="SourceText">generate_addresses</span> из C++ захотела стать похожей на свою ленивую коллегу, ей пришлось бы стать примерно такой:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">IPAddresses</span> <span>generate_addresses</span>( <span class="aaaa">size_t</span> howMany, </p>
+    <p class="aa">                                <span class="aaa">const</span> <span class="aaaa">std::string</span>&amp; address ) {</p>
+    <p class="aa">    <span class="aaaa">IPAddresses</span> addresses;</p>
+    <p class="aa">    <span class="aaa">for</span>(;;) {</p>
+    <p class="aa">        addresses.push_back( address );</p>
+    <p class="aa">    }</p>
+    <p class="aa">    <span class="aaa">return</span> addresses;</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И всё бы хорошо, но это намертво зависнет. И причиной тому  служит уже известное нам трудолюбие функции <span class="SourceText">generate_addresses</span>. Сказали ей создать бесконечно большой список — будет создавать до последнего вздоха, ведь цикл <span class="SourceText">for</span> в данном случае не имеет выхода.</p>
+    <p class="calibre16">Однако если мы соберём наш Haskell-проект и запустим его, то не будет никакого зависания, и на экран вновь выведутся уже знакомые нам два адреса.</p>
+    <p class="calibre16">А всё потому, что функция <span class="SourceText">repeat</span> столь же ленива и рациональна, как и её коллега <span class="SourceText">replicate</span>. Да, мы попросили её создать бесконечно большой список, однако на деле она создаст список вовсе не бесконечно большой, а настолько большой, насколько потребуется. И если в данном случае потребовался список только из двух строк — получите список из двух строк. Конечно, если бы потребовался список из миллиона строк — извольте, будет вам миллион.</p>
+    <p class="calibre16">Вот суть ленивых вычислений в Haskell: не важно, сколько приказали сделать, ведь в конечном итоге будет сделано ровно столько, сколько реально понадобится.</p>
+    </body>
+</html>

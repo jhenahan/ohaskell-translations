@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc7" class="calibre8">Создаём проект</h2>
+    <p class="calibre16">Мы не можем начать изучение языка без полигона. Поэтому скачайте и установите Haskell Platform<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn4" id="bodyftn4" class="pcalibre pcalibre1">4</a></span>.</p>
+    <p class="calibre16">В состав Haskell Platform входит два важнейших компонента, о которых вам нужно знать:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16"><span class="SourceText">ghc</span>, компилятор Haskell (<span class="calibre21">G</span>lasgow <span class="calibre21">H</span>askell <span class="calibre21">C</span>ompiler);</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16"><span class="SourceText">ghci</span>, интерпретатор Haskell.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Запомнили? А теперь можете забыть. Особенно про интерпретатор. Ведь вы планируете использовать Haskell в реальной работе, а это значит, все ваши проекты будут компилироваться. Однако и непосредственное использование компилятора <span class="SourceText">ghc</span> вам тоже едва ли понадобится. Впрочем, интерпретатор <span class="SourceText">ghci</span>  бывает полезен в ряде случаев, но без него вполне можно обойтись.</p>
+    <p class="calibre16">В реальной работе вы не будете создавать файлик <span class="SourceText">Main.hs</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn5" id="bodyftn5" class="pcalibre pcalibre1">5</a></span></span> на рабочем столе для последующего скармливания его компилятору. Напротив, вы создадите нормальный рабочий проект с логичной внутренней структурой. Так давайте и создадим такой с самого начала. А поможет нам в этом удобная утилита из Haskell Platform с необычным названием <span class="SourceText">cabal</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn6" id="bodyftn6" class="pcalibre pcalibre1">6</a></span></span>.</p>
+    <p class="calibre16">Утилита <span class="SourceText">cabal</span> предназначена для сборки проектов. Уверен, вы слышали о вещах типа <span class="SourceText">cmake</span> или <span class="SourceText">qmake</span>, так вот воспринимайте <span class="SourceText">cabal</span> как «<span class="SourceText">cmake</span> специально для Haskell».</p>
+    <p class="calibre16">Начнём творить. Разумеется, все описываемые ниже действия подразумевают вашу крепкую дружбу с командной строкой. Я буду приводить Unix-овые команды, если же вы используете Windows — адаптируйте примеры под себя.</p>
+    <h3 id="toc8" class="calibre22">Готовим структуру</h3>
+    <p class="calibre16">Открываем терминал и творим:</p>
+    <p class="calibre16"> </p>
+    <p class="a">
+      <span class="calibre21">
+        <span class="calibre23">$ mkdir -p Real/src/Utils</span>
+      </span>
+    </p>
+    <p class="a">
+      <span class="calibre21">
+        <span class="calibre23">$ touch Real/src/Main.hs</span>
+      </span>
+    </p>
+    <p class="a">$ touch Real/src/Utils/Helpers.hs</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Итак, у нас появился каталог <span class="SourceText">Real</span> с привычной структурой:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Real/</p>
+    <p class="a">└── src</p>
+    <p class="a">    ├── Main.hs</p>
+    <p class="a">    └── Utils</p>
+    <p class="a">        └── Helpers.hs</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Есть корневой каталог <span class="SourceText">src</span>, внутри которой лежат все наши исходники, сгруппированные по логическим признакам.</p>
+    <p class="calibre16">Кстати, об именах. Вам, вероятно, интересно, почему имена файлов и каталогов внутри каталога <span class="SourceText">src</span> начинаются с большой буквы? Чуть позже я объясню причину. А пока откроем файл <span class="SourceText">Main.hs</span> и напишем в нём:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> <span class="a1">"Hi, haskeller!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Закрываем, возвращаемся в корень проекта.</p>
+    <h3 id="toc9" class="calibre22">Настраиваем</h3>
+    <p class="calibre16">Выполняем команду:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal init</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы попадём в интерактивный диалог, в ходе которого нам будет предложено ответить на несколько вопросов о нашем проекте. В конце этого диалога будут автоматически созданы файлы проекта, и наш каталог приобретёт следующее содержимое:</p>
+    <p class="calibre16"> </p>
+    <p class="a">.</p>
+    <p class="a">├── Real.cabal</p>
+    <p class="a">├── Setup.hs</p>
+    <p class="a">└── src</p>
+    <p class="a">    ├── Main.hs</p>
+    <p class="a">    └── Utils</p>
+    <p class="a">        └── Helpers.hs</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Кстати, если вдруг вы увидите вот такое предупреждение:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Generating LICENSE...</p>
+    <p class="a">Warning: unknown license type, you must put a copy in LICENSE yourself.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">не беспокойтесь. Просто добавьте файл <span class="SourceText">LICENSE</span> вручную, для поддержания классического вида проекта.</p>
+    <p class="calibre16">Как уже было упомянуто, в корневом каталоге нашего проекта появились два новых файла, <span class="SourceText">Real.cabal</span> и <span class="SourceText">Setup.hs</span>. Второй файл нам не так интересен<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn7" id="bodyftn7" class="pcalibre pcalibre1">7</a></span>, а вот первый — это и есть сборочный файл нашего проекта. Откроем его:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aa1">-- Initial Real.cabal generated by cabal init.  For further documentation, </span>
+    </p>
+    <p class="aa">
+      <span class="aa1">-- see http://haskell.org/cabal/users-guide/</span>
+    </p>
+    <p class="aa">name:                Real</p>
+    <p class="aa">version:             0.1.0.0</p>
+    <p class="aa">synopsis:            Real project in Haskell</p>
+    <p class="aa"><span class="aa1">-- description:</span>         </p>
+    <p class="aa"><span class="aa1">-- license:</span>             </p>
+    <p class="aa">license-file:        LICENSE</p>
+    <p class="aa">author:              Denis Shevchenko</p>
+    <p class="aa">maintainer:          me@dshevchenko.biz</p>
+    <p class="aa"><span class="aa1">-- copyright: </span>          </p>
+    <p class="aa"><span class="aa1">-- category: </span>           </p>
+    <p class="aa">build-type:          Simple</p>
+    <p class="aa">cabal-version:       &gt;=1.8</p>
+    <p class="aa"> </p>
+    <p class="aa">executable Real</p>
+    <p class="aa">  <span class="aa1">-- main-is:             </span></p>
+    <p class="aa"><span class="aa1">  -- other-modules: </span>      </p>
+    <p class="aa">  build-depends:       base ==4.6.*</p>
+    <p class="aa">  hs-source-dirs:      src</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь уже сохранены те самые значения, которые мы вводили в процессе вышеупомянутого диалога. Однако собрать проект прямо сейчас мы не сможем, потому что строка:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">  <span class="aa1">-- main-is:</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">закомментирована. В этом файле принят синтаксис, подобный синтаксису Haskell, и поэтому однострочные комментарии здесь, как и в программном коде, начинаются с двух минусов подряд. Многострочный комментарий, который вам тоже понадобится, заключается между символами <span class="SourceText">{-</span> и <span class="SourceText">-}</span>.</p>
+    <p class="calibre16">Нам необходимо раскомментировать эту строку и прописать в ней имя файла <span class="SourceText">Main.hs</span>, содержащего функцию <span class="SourceText">main</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn8" id="bodyftn8" class="pcalibre pcalibre1">8</a></span></span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">  main-is: Main.hs</p>
+    <h3 id="toc10" class="calibre22">Конфигурируем</h3>
+    <p class="calibre16">Выполняем:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal configure</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В результате произойдёт подготовка проекта к сборке. Но прежде чем перейти к этой самой сборке, обращаю ваше внимание на последнюю часть файла <span class="SourceText">Real.cabal</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">executable Real</p>
+    <p class="aa">  main-is:             Main.hs             </p>
+    <p class="aa">  -- other-modules:       </p>
+    <p class="aa">  build-depends:       base ==4.6.*</p>
+    <p class="aa">  hs-source-dirs:      src</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Видите отступ в два пробела перед четырьмя последними строчками? Оказывается, этот отступ необходим, и без него проект не соберётся. Кроме того, отступ этот должен быть не менее двух пробелов. Я рекомендую четыре, для красоты.</p>
+    <p class="calibre16">И ещё одна деталь. Это необязательно, но лишним не будет. Допишем в секцию <span class="SourceText">executable Real</span> ещё одну строку:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">  ghc-options:         -W </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Параметр <span class="SourceText">ghc-options</span> позволяет задавать флаги <span class="SourceText">ghc</span>. В частности, флаг <span class="SourceText">-W</span> вежливо попросит <span class="SourceText">ghc</span> показывать все основные предупреждения при компиляции. Не пренебрегайте этой возможностью.</p>
+    <h3 id="toc11" class="calibre22">Собираем</h3>
+    <p class="calibre16">Выполняем:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ cabal build</p>
+    <p class="a">Building Real-0.1.0.0...</p>
+    <p class="a">Preprocessing executable 'Real' for Real-0.1.0.0...</p>
+    <p class="a">[1 of 1] Compiling Main             ( src/Main.hs, dist/build/Real/Real-tmp/Main.o )</p>
+    <p class="a">Linking dist/build/Real/Real ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово. В нашем каталоге появилось кое-что новенькое:</p>
+    <p class="calibre16"> </p>
+    <p class="a">.</p>
+    <p class="a">├── LICENSE</p>
+    <p class="a">├── Real.cabal</p>
+    <p class="a">├── Setup.hs</p>
+    <p class="a">├── dist</p>
+    <p class="a">│   ├── build</p>
+    <p class="a">│   │   ├── Real</p>
+    <p class="a">│   │   │   ├── Real  &lt;&lt;&lt;--- Это и есть наш исполняемый файл.</p>
+    <p class="a">...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Остальное содержимое каталога <span class="SourceText">dist</span> нас пока не интересует.</p>
+    <h3 id="toc12" class="calibre22">Запускаем</h3>
+    <p class="calibre16">Пришло время запустить наше приложение. Находясь в корне проекта, выполняем:</p>
+    <p class="calibre16"> </p>
+    <p class="a">$ ./dist/build/Real/Real</p>
+    <p class="a">Hi haskeller!</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот и всё. Теперь вы знаете, как создавать, настраивать и собирать Haskell-проект. Вероятно, вас интересует, зачем мы создавали файл <span class="SourceText">Helpers.hs</span> в подкаталоге <span class="SourceText">Utils</span>? Какой в нём смысл, если он всё равно остался пустым? В следующей главе вы это узнаете.</p>
+    </body>
+</html>

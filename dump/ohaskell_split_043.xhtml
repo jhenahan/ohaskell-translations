@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc142" class="calibre8">Может быть</h2>
+    <p class="calibre16">Есть в Haskell ещё один механизм обработки ошибок, не связанный ни с исключениями, ни с <span class="SourceText">IO</span>. Используется он весьма часто, поэтому знать о нём нужно. Речь идёт о стандартном типе <span class="SourceText">Maybe</span>.</p>
+    <h3 id="toc143" class="calibre22">Что за зверь</h3>
+    <p class="calibre16">Тип <span class="SourceText">Maybe</span> — это опциональное значение. Оно говорит нам: «Может быть во мне есть некое реальное значение, а может быть и нету.» Вот его определение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Maybe</span> a = <span class="aaaa">Nothing</span> | <span class="aaaa">Just</span> a</p>
+    <p class="aa">               <span class="aaa">deriving</span> (<span class="aaaa">Eq</span>, <span class="aaaa">Ord</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип представлен двумя конструкторами: нульарным <span class="SourceText">Nothing</span> и унарным <span class="SourceText">Just</span>. Если значение было создано с конструктором <span class="SourceText">Nothing</span> — значит оно представляет собой пустышку, если же с конструктором <span class="SourceText">Just</span> — оно содержит в себе нечто полезное.</p>
+    <h3 id="toc144" class="calibre22">Для чего он</h3>
+    <p class="calibre16">Простой пример:</p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>coefficientFromString</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">Maybe Int</span></p>
+    <p class="aa"><span>coefficientFromString</span> str =</p>
+    <p class="aa">    <span class="aaa">if</span> <span>isNumber</span> firstChar <span class="aaa">then</span> <span class="aaaa">Just</span> (<span>digitToInt</span> firstChar) <span class="aaa">else</span> <span class="aaaa">Nothing</span></p>
+    <p class="aa">    <span class="aaa">where</span> firstChar = str !! 0  <span class="aa1">-- Извлекаем символ с индексом 0.</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>check</span> :: <span class="aaaa">Maybe Int</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>check</span> aCoefficient</p>
+    <p class="aa">    | aCoefficient == <span class="aaaa">Nothing</span> = <span class="a1">"Invalid string!"</span>  <span class="aa1">-- Коэффициент пустой!</span></p>
+    <p class="aa">    | <span class="aaa">otherwise</span> = <span>show</span> aCoefficient</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span>print</span> $ <span>check</span> $ <span>coefficientFromString</span> <span class="a1">"0"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы пытаемся извлечь цифру из полученной строки, но что делать, если первым символом этой строки является нечисловой символ? Возвращать <span class="SourceText">-1</span>? Это не всегда приемлемо. Поэтому мы возвращаем значение типа <span class="SourceText">Maybe Int</span>, которое может содержать в себе извлечённую цифру, а может и не содержать. И уже в функции <span class="SourceText">check</span> мы проверяем, с каким конструктором было создано значение <span class="SourceText">aCoefficient</span>. Если с конструктором <span class="SourceText">Nothing</span> — значит извлечь цифру не удалось.</p>
+    <p class="calibre16">Обратите внимание: мы явно проверяем аргумент на равенство с нульарным конструктором:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">aCoefficient == <span class="aaaa">Nothing</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако в модуле <span class="SourceText">Data.Maybe</span> есть два удобных предиката, <span class="SourceText">isJust</span> и <span class="SourceText">isNothing</span>. Поэтому мы могли бы написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>isNothing</span> aCoefficient</p>
+    <h3 id="toc145" class="calibre22">Ещё и монада</h3>
+    <p class="calibre16">Как уже было сказано в предыдущей главе, тип <span class="SourceText">Maybe</span> — это не просто опциональная обёртка, это ещё и монада. Поэтому мы можем делать вот такие вещи:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.String.Utils</span></p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Maybe</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>result</span> :: <span class="aaaa">Maybe String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>result</span> email = <span class="aaa">if</span> <span>isNothing</span> email <span class="aaa">then</span> <span class="a1">"Bad email"</span> <span class="aaa">else</span> <span class="a1">"Good!"</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>result</span> $ <span class="aaaa">Just</span> <span class="a1">"me@gmail.com"</span> &gt;&gt;= <span>checkFormat</span> &gt;&gt;= <span>checkDomain</span></p>
+    <p class="aa">    <span class="aaa">where</span> <span>checkFormat</span> email = </p>
+    <p class="aa">              <span class="aaa">if</span> <span class="a1">'@'</span> <span>`elem`</span> email <span class="aaa">then</span> <span>return</span> email <span class="aaa">else</span> <span class="aaaa">Nothing</span></p>
+    <p class="aa">          <span>checkDomain</span> email = </p>
+    <p class="aa">              <span class="aaa">if</span> email <span>`endsWith`</span> <span class="a1">".com"</span> <span class="aaa">then</span> <span>return</span> email <span class="aaa">else</span> <span class="aaaa">Nothing</span></p>
+    <p class="aa">          <span>endsWith</span> str suffix = <span>endswith</span> suffix str</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обмотали почтовый адрес в <span class="SourceText">Maybe</span>, прогнали его через проверочный конвейер и сделали вывод о корректности адреса. Если адрес некорректен — нам неважно, на какой стадии будет обнаружена ошибка, в любом случае конечный вывод будет однозначен.</p>
+    <p class="calibre16">Ну вот, теперь вы знаете о <span class="SourceText">Maybe</span>.</p>
+    </body>
+</html>

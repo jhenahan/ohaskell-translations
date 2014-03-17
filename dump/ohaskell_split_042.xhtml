@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc138" class="calibre8">Монады: практика</h2>
+    <p class="calibre16">Зачем же ради соединения вычислений в последовательную цепочку обматывать эти вычисления в какие-то монадические обёртки?</p>
+    <p class="calibre16">Главная цель такого подхода: гибкость и упрощение кода. Приступим.</p>
+    <h3 id="toc139" class="calibre22">Разоблачение списков</h3>
+    <p class="calibre16">Списки в Haskell — это тоже монады. Рассмотрим, какую пользу нам может принести этот факт.</p>
+    <p class="calibre16">Начнём со строки. Она ведь есть ни что иное, как <span class="SourceText">[Char]</span>, а это значит, она тоже является монадой. Помните наш пример про исправление URL? Напишем нечто похожее:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>toLowerCase</span> = <span>return</span> . <span>toLower</span></p>
+    <p class="aa"><span>underlineSpaces</span> char = <span>return</span> (<span class="aaa">if</span> char == <span class="a1">' '</span> <span class="aaa">then</span> <span class="a1">'_'</span> <span class="aaa">else</span> char)</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> () </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ name &gt;&gt;= <span>toLowerCase</span> &gt;&gt;= <span>underlineSpaces</span></p>
+    <p class="aa">    <span class="aaa">where</span> name = <span class="a1">"Lorem ipsuM"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе у нас будет:</p>
+    <p class="calibre16"> </p>
+    <p class="a">lorem_ipsum</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Проанализируем. Наше внимание приковывает вот эта строка:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">name &gt;&gt;= <span>toLowerCase</span> &gt;&gt;= <span>underlineSpaces</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В глаза бросаются операторы компоновки, а это значит, перед нами монадический конвейер. Слева в него въезжает наша строка <span class="SourceText">name</span>, то есть монада <span class="SourceText">[Char]</span>, и едет по нему. А за конвейером её ждут два работника, <span class="SourceText">toLowerCase</span> и <span class="SourceText">underlineSpaces</span>, каждый из которых вносит в <span class="SourceText">name</span> свои изменения.</p>
+    <p class="calibre16">Вы спросите, в чём же тут соль? Чем это отличается от функций композиции и применения, рассмотренных нами ранее<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn19" id="bodyftn19" class="pcalibre pcalibre1">19</a></span>? Ведь там мы тоже конструировали конвейер из трёх функций:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>addPrefix</span> . <span>encodeAllSpaces</span> . <span>makeItLowerCase</span> $ url</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако отличия имеются, и главное из них в том, что эти три функции работают со строкой, а функции <span class="SourceText">toLowerCase</span> и <span class="SourceText">underlineSpaces</span> работают с <span class="calibre18">элементом</span> строки. Взгляните:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>toLowerCase</span> = <span>return</span> . <span>toLower</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция ожидает на вход символ, а не строку, ведь функция <span class="SourceText">toLower</span> применяется к значению типа <span class="SourceText">Char</span>. И это очень важное свойство функций, компонуемых в монадическую цепочку: они работают со значением, содержащимся в монаде, а не с самой монадой. Поскольку в данном случае монадой является <span class="SourceText">[Char]</span>, функция <span class="SourceText">toLowerCase</span> работает только с <span class="SourceText">Char</span>, извлекаемым из списка оператором компоновки. Понятно, что оператор компоновки, определённый для списка, подразумевает «прогон» монадной функции через все элементы этого списка.</p>
+    <p class="calibre16">Монадическая цепочка предоставляет нам большую гибкость, ведь функции <span class="SourceText">toLowerCase</span> и <span class="SourceText">underlineSpaces</span> вообще не знают о том, что работают они в конечном итоге со строкой. А значит, эти функции можно соединять для работы с самыми разными монадами, содержащими в себе значение(я) типа <span class="SourceText">Char</span>. </p>
+    <p class="calibre16">Кстати, важное уточнение: функции такого рода могут работать только с монадами, о чём красноречиво говорит функция <span class="SourceText">return</span>. Взглянем на определение ещё раз:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>toLowerCase</span> = <span>return</span> . <span>toLower</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция говорит нам: «Да, я работаю с аргументом типа <span class="SourceText">Char</span>, но в конце своей работы я, с помощью функции <span class="SourceText">return</span>, возвращаю итоговое значение типа <span class="SourceText">Char</span> обратно в <span class="calibre18">какую-то</span> монаду.» А вот в какую именно — это уже неважно. Поэтому мы можем написать, например, так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Data.Char</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ name &gt;&gt;= <span>toLowerCase</span></p>
+    <p class="aa">    <span class="aaa">where</span> name = <span class="aaaa">Just</span> <span class="a1">'A'</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Кстати, чтобы это заработало, откройте файл <span class="SourceText">Real.cabal</span>, найдите в нём секцию <span class="SourceText">executable Real</span> и допишите в ней новый параметр:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">    extensions:          NoMonomorphismRestriction</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция  <span class="SourceText">toLowerCase</span> остаётся в счастливом неведении о том, что теперь она фактически работает уже не со списком символов, а с монадой <span class="SourceText">Maybe</span><span class="SourceText"><span class="Footnoteanchor1"><a href="ohaskell_split_054.xhtml#ftn20" id="bodyftn20" class="pcalibre pcalibre1">20</a></span></span>, содержащей в себе символ. И поэтому функция <span class="SourceText">return</span> в теле функции <span class="SourceText">toLowerCase</span><span> </span>завернёт итоговый символ уже не списочную монаду, а в монаду <span class="SourceText">Maybe</span>. Именно поэтому я и сказал выше, что функцию, задуманную для работы с одной монадой, можно использовать для работы с другими.</p>
+    <h3 id="toc140" class="calibre22">Меняем тип</h3>
+    <p class="calibre16">Ещё один пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Char</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> () </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ numbers &gt;&gt;= <span>toRealNumbers</span></p>
+    <p class="aa">    <span class="aaa">where</span> numbers = <span class="a1">"1234567890"</span></p>
+    <p class="aa">
+      <span class="a1">          </span>
+      <span>toRealNumbers</span>
+      <span class="a1"> = </span>
+      <span>return</span>
+      <span class="a1"> . </span>
+      <span>digitToInt</span>
+    </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">На выходе нас ждёт:</p>
+    <p class="calibre16"> </p>
+    <p class="a">[1,2,3,4,5,6,7,8,9,0]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь произошло изменение типа монады. Функция <span class="SourceText">toRealNumbers</span> превращает символ в его цифровое представление. И вновь оператор компоновки и функция <span class="SourceText">return</span> сделали своё красивое дело: на вход была подана монада <span class="SourceText">[Char]</span>, а на выходе получили монаду <span class="SourceText">[Int]</span>. Таким образом, на протяжении всей цепочки монадическая обёртка остаётся неизменной<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn21" id="bodyftn21" class="pcalibre pcalibre1">21</a></span>, а вот наполнение этой обёртки может изменять не только своё значение, но и свой тип.</p>
+    <h3 id="toc141" class="calibre22">Зеркальная компоновка</h3>
+    <p class="calibre16">В стандартном пакете <span class="SourceText">Prelude</span> определён ещё один монадический оператор, который можно назвать «зеркальной компоновкой». Всё то же самое, но справа налево. Вот как это будет выглядеть в нашем примере:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Data.Char</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> () </p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>toLowerCase</span> =&lt;&lt; <span>underlineSpaces</span> =&lt;&lt; name</p>
+    <p class="aa">    <span class="aaa">where</span> name = <span class="a1">"Lorem ipsuM"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы просто развернули оператор компоновки наоборот, и теперь значение <span class="SourceText">name</span> заезжает в конвейер справа налево. Лично мне классический вариант кажется более удобным, так что выбор между обычной и зеркальной компоновкой — это вопрос эстетический.</p>
+    <p class="calibre16">Монадические цепочки — красивый и гибкий инструмент связки вычислений. Как мы смогли убедиться, аналогия с Unix-каналом оказалась весьма точной.</p>
+    </body>
+</html>

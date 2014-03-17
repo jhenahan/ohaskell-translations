@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc29" class="calibre8">Неизменность данных</h2>
+    <p class="calibre16">Одним из фундаментальных свойств Haskell языка является отсутствие оператора присваивания.</p>
+    <p class="calibre16">Это именно то свойство, услышав о котором впервые, я не поверил своим ушам. Каким образом можно программировать без оператора присваивания? А как же мы будем изменять состояние наших переменных? Моё удивление можно было понять: в процессе написания кода на C++ я часто использую оператор присваивания.</p>
+    <p class="calibre16">Чтобы разобраться, рассмотрим такую строку:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">a = 123</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В императивном языке такая инструкция означает присваивание. В этом случае мы приказываем: «Возьми совокупность байтов, соответствующую значению <span class="SourceText">123</span>, и замени ею ту совокупность байтов, которая хранилась в переменной <span class="SourceText">a</span> до этого.» Таким образом, происходит перезапись старого значения новым.</p>
+    <p class="calibre16">Однако в чисто функциональном языке такая инструкция означает то же, что она означает в математике, а именно равенство. В этом случае мы объявляем: «Значение <span class="SourceText">a</span> равно <span class="SourceText">123</span>.»</p>
+    <p class="calibre16">Вы спросите, в чём разница? Ведь мы в любом случае получаем переменную <span class="SourceText">a</span> со значением <span class="SourceText">123</span>. А разница в том, что присваивание может происходить множество раз в отношении одной и той же переменной, в то время как объявление равенства может быть указано только единожды. Поэтому если мы объявили, что значение <span class="SourceText">a</span> равно <span class="SourceText">123</span>, то так оно и будет, раз и навсегда. Именно поэтому в языке Haskell нет ни понятия «переменная», ни ключевого слова <span class="SourceText">const</span>, ведь все значения в нём константны по своей сути.</p>
+    <p class="calibre16">Вероятно, вас интересует, как же мы сможем добавить элемент в какую-нибудь коллекцию, если у нас всё константное? Ответ: никак. Мы не можем изменить значение, мы можем лишь создать на его основе <span class="calibre18">новое</span> значение. О памяти не беспокойтесь: выделена она будет автоматически, равно как и уничтожена<span class="Footnoteanchor"><a href="ohaskell_split_054.xhtml#ftn11" id="bodyftn11" class="pcalibre pcalibre1">11</a></span>.</p>
+    <p class="calibre16">Вскоре вы увидите, что можно прекрасно жить без оператора присваивания.</p>
+    </body>
+</html>

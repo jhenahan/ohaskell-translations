@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc111" class="calibre8">IO a</h2>
+    <p class="calibre16">Итак, для работы с внешним миром нам нужны действия. А действие представляет собой значение типа <span class="SourceText">IO a</span>, где <span class="SourceText">IO</span> — это стандартный тип действия, а <span class="SourceText">a</span> — это полиморфный тип значения, возвращённого этим действием. Как вы уже поняли, <span class="SourceText">IO</span> — это конструктор типа. Поэтому тип действия, возвращающего строку, такой: <span class="SourceText">IO String</span>.</p>
+    <p class="calibre16">С логической точки зрения, действие — это наш посол, который по нашей просьбе уходит во внешний мир, делает там какую-то работу, а потом приносит нам из внешнего мира что-нибудь интересное. Впрочем, иногда он может вернуться из внешнего мира и с пустыми руками.</p>
+    <h3 id="toc112" class="calibre22">Стандартные ввод и вывод</h3>
+    <p class="calibre16">Начнём со стандартных каналов <span class="SourceText">stdout</span> и <span class="SourceText">stdin</span>. Выведем строку на экран:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> <span class="a1">"Hi Haskeller!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Взглянем на объявление функции <span class="SourceText">putStrLn</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>putStrLn</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">IO</span> ()</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами <span class="SourceText">IO</span>, а значит, данная функция имеет побочное действие. На входе у нас строка, а на выходе — действие. Рассмотрим его поближе:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">IO</span> ()</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Одинокие круглые скобки говорят нам о пустом кортеже. Следовательно, перед нами действие, которое, сделав во внешнем мире свою работу, ничего нам не принесёт. Мы, посылая это действие во внешний мир, говорим ему: «Пойди и просто напечатай на экране компьютера переданную тебе строку.» Но раз уж создатели Haskell договорились о том, что действие обязано <span class="calibre18">что-то</span> вернуть — пусть оно возвращает пустой кортеж. Это как <span class="SourceText">void</span>-функция в языке C: можно сказать, что она не возвращает ничего, а можно сказать, что она возвращает <span class="SourceText">void</span>.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Теперь взглянем на объявление функции <span class="SourceText">getLine</span>, получающей строку со стандартного ввода:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>getLine</span> :: <span class="aaaa">IO String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тут противоположная ситуация. Эта функция ничего не принимает от нас, потому что нам нечего ей дать, и порождённое этой функцией действие идёт во внешний мир с пустыми руками. Мы говорим ему: «Пойди, получи со стандартного ввода строку и принеси её нам.»</p>
+    <h3 id="toc113" class="calibre22">Объявляем <span class="calibre28">main</span></h3>
+    <p class="calibre16">Теперь мы наконец-то можем взглянуть на её объявление:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">main</span> тоже совершает действие — работу всего нашего приложения. Понятно, что она ничего не возвращает в приложение, ведь при её завершении заканчивается всё. Разумеется, все действия в нашем приложении спят крепким сном и ничего не делают до тех пор, пока не будет запущено действие функции <span class="SourceText">main</span>.</p>
+    <p class="calibre16">Мы до сих пор не писали объявление этой функции, потому что только сейчас узнали об <span class="SourceText">IO</span>. Но, строго говоря, мы должны это делать. Хотя бы для порядка.</p>
+    <h3 id="toc114" class="calibre22">Совместная работа</h3>
+    <p class="calibre16">Вот она:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Input your text, please:"</span></p>
+    <p class="aa">    lineFromUser &lt;- <span>getLine</span></p>
+    <p class="aa">    <span>putStrLn</span> $ <span class="a1">"Not bad: "</span> ++ lineFromUser</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тут всё предельно понятно, за исключением двух новых вещей.</p>
+    <p class="calibre16">Во-первых, обратная стрелочка <span class="SourceText">'&lt;-'</span>. Взглянем на неё:</p>
+    <p class="aa">lineFromUser &lt;- <span>getLine</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это — ассоциация. Мы говорим действию, порождённому функцией <span class="SourceText">getLine</span>: «Пойди, получи введённую пользователем строку, принеси её нам и привяжи (bind) её к идентификатору <span class="SourceText">lineFromUser</span>, чтобы мы cмогли прочесть эту строку.»</p>
+    <p class="calibre16">Вторая новизна в этом коде — ключевое слово <span class="SourceText">do</span>. И о нём стоит поговорить отдельно.</p>
+    </body>
+</html>

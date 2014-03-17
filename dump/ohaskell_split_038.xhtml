@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc124" class="calibre8">Собственные исключения</h2>
+    <p class="calibre16">До сих пор мы лишь ловили исключения. Теперь поговорим о том, как их бросать, а также о том, как создать свои собственные типы исключений.</p>
+    <h3 id="toc125" class="calibre22">Создаём</h3>
+    <p class="calibre16">Определяем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Control.Exception</span></p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.String.Utils</span></p>
+    <p class="aa"><span class="aaa">import</span> <span class="aaaa">Data.Typeable</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">type</span> <span class="aaaa">Repo</span> = <span class="aaaa">String</span></p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">InvalidRepository</span> = <span class="aaaa">InvalidRepository</span> <span class="aaaa">Repo</span></p>
+    <p class="aa">                         <span class="aaa">deriving</span> (<span class="aaaa">Show</span>, <span class="aaaa">Typeable</span>)</p>
+    <p class="aa"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Exception</span> <span class="aaaa">InvalidRepository</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Подразумевается, что мы анализируем некий репозиторий, и если он некорректен, в дело вступает исключение <span class="SourceText">InvalidRepository</span>. Мы наследовались от двух классов, <span class="SourceText">Show</span> и <span class="SourceText">Typeable</span>. Сделать это необходимо, потому что наш тип обязан предоставить свой экземпляр класса типов <span class="SourceText">Exception</span>, а этот класс устанавливает контекст из этих двух классов.</p>
+    <p class="calibre16">Вы спросите, что это за необычная строка:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Exception</span> <span class="aaaa">InvalidRepository</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед нами — экземпляр класса типов <span class="SourceText">Exception</span>, но в этом экземпляре нет ни ключевого слова <span class="SourceText">where</span>, ни последующих реализаций соответствующих методов. Класс <span class="SourceText">Exception</span> содержит в себе два метода, но мы говорим: «Вот наш экземпляр класса типов <span class="SourceText">Exception</span>, но предоставлять реализации его методов мы не хотим.»</p>
+    <h3 id="toc126" class="calibre22">Бросаем</h3>
+    <p class="calibre16">Для того, чтобы бросить исключение, используем функцию <span class="SourceText">throw</span>. Не забывайте, что даже в том случае, если исключение было брошено из чистой функции, поймать его мы сможем только в <span class="SourceText">IO</span>-функции.</p>
+    <p class="calibre16">Напишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>extractProtocol</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>extractProtocol</span> path =</p>
+    <p class="aa">    <span class="aaa">if</span> path <span>`startsWith`</span> <span class="a1">"git"</span> || path <span>`startsWith`</span> <span class="a1">"ssh" </span></p>
+    <p class="aa">    <span class="aaa">then</span> <span>takeWhile</span> (/= <span class="a1">':'</span>) path</p>
+    <p class="aa">    <span class="aaa">else</span> <span>throw</span> $ <span class="aaaa">InvalidRepository</span> path  <span class="aa1">-- Протокол неверный, кидаем...</span></p>
+    <p class="aa">    <span class="aaa">where</span> <span>startsWith</span> url prefix = <span>startswith</span> prefix url</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    result &lt;- <span>try</span> $ <span>evaluate</span> $ <span>extractProtocol</span> <span class="a1">"ss://ul@sch/proj.git"</span> </p>
+    <p class="aa">                    :: <span class="aaaa">IO</span> (<span class="aaaa">Either SomeException String</span>)</p>
+    <p class="aa">    <span class="aaa">case</span> result <span class="aaa">of</span></p>
+    <p class="aa">        <span class="aaaa">Left</span> exception -&gt; <span>putStrLn</span> $ <span class="a1">"Fault: "</span> ++ <span>show</span> exception</p>
+    <p class="aa">        <span class="aaaa">Right</span> protocol -&gt; <span>putStrLn</span> protocol</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вывод будет таким:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Fault: InvalidRepository "ss://ul@sch/proj.git"</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы пытаемся извлечь протокол из полного пути к репозиторию, и если там не то, что нам нужно, мы кидаем исключение, перехватывающееся функцией <span class="SourceText">try</span>.</p>
+    <p class="calibre16">Всё. Теперь мы можете создавать собственные типы исключений и кидаться ими на здоровье.</p>
+    </body>
+</html>

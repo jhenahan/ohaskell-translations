@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc146" class="calibre8">Функторы</h2>
+    <p class="calibre16">Поговорим о функторах, одной из важных концепций языка Haskell. На самом деле мы их уже использовали, осталось лишь разобраться в сути.</p>
+    <h3 id="toc147" class="calibre22">Разбираемся</h3>
+    <p class="calibre16">Функторами называют такие типы, значения которых могут быть маппированы (mapped over). Помните стандартную функцию <span class="SourceText">map</span>, позволяющую последовательно применить функцию к каждому элементу списка? Вот это тот самый случай.</p>
+    <p class="calibre16">Все функторы представлены стандартным классом <span class="SourceText">Functor</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Functor</span> f <span class="aaa">where</span></p>
+    <p class="aa">    <span>fmap</span> :: (a -&gt; b) -&gt; f a -&gt; f b</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Один-единственный метод <span class="SourceText">fmap</span>, который говорит: «Дайте мне функцию, принимающую значение <span class="SourceText">a</span> и возвращающую значение <span class="SourceText">b</span>, а ещё дайте значение <span class="SourceText">a</span> в функторной обёртке, а я верну вам значение <span class="SourceText">b</span> в такой же функторной обёртке.»</p>
+    <p class="calibre16">Многие стандартные типы являются функторами.</p>
+    <h3 id="toc148" class="calibre22">Зачем это нам</h3>
+    <p class="calibre16">Функция <span class="SourceText">fmap</span> — это волшебница. Она говорит: «Дайте мне <span class="calibre30">волшебную палочку</span> функцию и <span class="calibre18">нечто</span>, а я прикоснусь функцией к этому <span class="calibre18">нечто</span> и изменю его.» Это <span class="calibre18">нечто</span> и есть функтор.</p>
+    <p class="calibre16">Разумеется, говоря об изменении, я выражаюсь концептуально. Если мы видим строку:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>fmap</span> <span>toLower</span> [<span class="a1">'A'</span>..<span class="a1">'Z'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">мы можем выразиться технически точно: «Функция <span class="SourceText">fmap</span> последовательно применит функцию <span class="SourceText">toLower</span> к каждому элементу списка, в результате чего будет сконструирован новый список со значениями, являющимися результатом применения функции <span class="SourceText">toLower</span> к элементам изначального списка.»</p>
+    <p class="calibre16">Но так слишком длинно. Поэтому мы можем выразиться концептуально: «Функция <span class="SourceText">fmap</span> прикоснулась функцией <span class="SourceText">toLower</span> к списку и изменила его.» В этом и заключается фундаментальный смысл функторов: посредством <span class="SourceText">fmap</span> мы прикасаемся к ним некой функцией и изменяем их.</p>
+    <p class="calibre16">Более того, такое изменение может касаться не только содержимого функтора, но и его типа. Например, если взять функтор типа <span class="SourceText">[Char]</span> и прикоснуться к нему такой функцией:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>fmap</span> <span>toLower</span> [<span class="a1">'A'</span>..<span class="a1">'Z'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">на выходе у нас тоже получится функтор того же типа <span class="SourceText">[Char]</span>. Однако если прикоснуться такой функцией:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>fmap</span> <span>digitToInt</span> [<span class="a1">'1'</span>..<span class="a1">'9'</span>]</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">на выходе у нас получится функтор типа <span class="SourceText">[Int]</span>.</p>
+    <h3 id="toc149" class="calibre22">Создаём свой</h3>
+    <p class="calibre16">Путь это будет год:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">Year</span> value = <span class="aaaa">Year</span> value</p>
+    <p class="aa">                  <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип <span class="SourceText">Year</span> содержит в себе год. Параметризация в данном случае весьма полезна: значение года может быть задано как числом, так и строкой. И поскольку значение года может (с концептуальной точки зрения) меняться, сделаем тип <span class="SourceText">Year</span> функторным:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Functor</span> <span class="aaaa">Year</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>fmap</span> <span>magicWand</span> (<span class="aaaa">Year</span> value) = <span class="aaaa">Year</span> (<span>magicWand</span> value)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Функция <span class="SourceText">magicWand</span> будет прикасаться не к году, а к его реальному содержимому. Например так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>increase</span> :: <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="aa"><span>increase</span> year = year + 1</p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>fmap</span> <span>increase</span> year</p>
+    <p class="aa">    <span class="aaa">where</span> year = <span class="aaaa">Year</span> 1981</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы определили функцию <span class="SourceText">increase</span>, увеличивающую значение года на один. Казалось бы, зачем делать тип <span class="SourceText">Year</span> функторным? Ведь мы могли бы определить функцию, работающую с этим типом напрямую. Однако в этом случае мы жёстко привяжемся к типу <span class="SourceText">Year</span>. А фундаментальное преимущество функтора как раз в том и заключается, что функция, изменяющая его содержимое, ничего не знает об самом функторе.</p>
+    <p class="calibre16">Следовательно, в качестве волшебной палочки, прикасающейся к нашему году, могут выступать совершенно посторонние функции. Это и открывает перед нами огромный творческий простор.</p>
+    <h3 id="toc150" class="calibre22">Инфиксная форма</h3>
+    <p class="calibre16">В стандартном модуле <span class="SourceText">Data.Functor</span> определён оператор необычного вида <span class="SourceText">&lt;$&gt;</span>, являющийся инфиксным аналогом функции <span class="SourceText">fmap</span>. Чуток перепишем наш пример с годом:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aaa">import</span>
+      <span> </span>
+      <span class="aaaa">Data.Functor</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa">
+      <span>...</span>
+    </p>
+    <p class="aa"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa">    <span>print</span> $ <span>increase &lt;$&gt;</span> year</p>
+    <p class="aa">    <span class="aaa">where</span> year = <span class="aaaa">Year</span> 1981</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат тот же самый, но инфиксная форма способна сделать код более читабельным.</p>
+    <p class="calibre16">Вот, теперь вы знаете о функторах. Рассматривайте их тоже как своего рода проектный паттерн, унифицирующий применение разных функций к разным значениям.</p>
+    </body>
+</html>

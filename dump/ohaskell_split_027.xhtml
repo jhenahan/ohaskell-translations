@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc77" class="calibre8">Типы — одним взглядом</h2>
+    <p class="calibre16">В настоящих проектах нам обязательно понадобятся наши собственные типы. О них и поговорим.</p>
+    <p class="calibre16">Прежде всего рассмотрим новые ключевые слова. Слово <span class="SourceText">data</span> служит для определения <span class="calibre18">типа</span>. Слово <span class="SourceText">class</span> используется для определения <span class="calibre18">класса типов</span>. А слово <span class="SourceText">instance</span> необходимо для определения <span class="calibre18">экземпляра класса типов</span>. Приступим.</p>
+    <h3 id="toc78" class="calibre22">Собственный тип</h3>
+    <p class="calibre16">Определим тип для IP-адреса:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IPAddress</span> <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово. Перед нами — простейший пользовательский тип. Значение этого типа фактически будет представлять собой значение типа <span class="SourceText">String</span> с меткой <span class="SourceText">IPAddress</span>. Рассматривайте метку как пояснительный идентификатор. Многие типы не имеют метки, поэтому их можно инициализировать значениями непосредственно. Например, если у нас есть некая функция, принимающая значение типа <span class="SourceText">Int</span>, то при её вызове мы будем писать просто:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>show</span> 6</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако если эта же функция будет применена к значению нашего типа <span class="SourceText">IPAddress</span>, мы должны будем явно указать это:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>show</span> (<span class="aaaa">IPAddress</span> <span class="a1">"127.0.0.1"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Выражение <span class="SourceText">(IPAddress "127.0.0.1")</span> породит значение типа <span class="SourceText">IPAddress</span>, содержащее в себе строку со значением <span class="SourceText">"127.0.0.1"</span>.</p>
+    <p class="calibre16">Кстати, метку принято называть конструктором значения.</p>
+    <p class="calibre16">Запомните: имя типа не может начинаться с маленькой буквы. Поэтому такой код:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">ipAddress</span> = <span class="aaaa">ipAddress</span> <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">будет отвергнут компилятором.</p>
+    <h3 id="toc79" class="calibre22">Класс типов</h3>
+    <p class="calibre16">Проблема в том, что тип <span class="SourceText">IPAddress</span> в его нынешнем виде настолько примитивен, что не представляет для нас никакого интереса. Мы, создав значение этого типа, даже не сможем вывести его на экран. И если мы прямо сейчас напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> $ <span class="aaaa">IPAddress</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">компилятор выдаст нам следующее:</p>
+    <p class="calibre16"> </p>
+    <p class="a">No instance for (Show IPAddress) arising from a use of `show'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И мы не имеем права обижаться на компилятор, он поступил совершенно правильно: стандартная функция <span class="SourceText">show</span>, преобразующая переданный ей аргумент в строковый вид, не имеет ни малейшего понятия о том, как представить объект типа <span class="SourceText">IPAddress</span> в виде строки. И она не узнает это до тех пор, пока мы явно не расскажем ей об этом. Вот тут-то и выходят на сцену классы типов. </p>
+    <p class="calibre16">Класс типов — это логическая группа типов, отражающая общие для всех этих типов черты. Класс типов предоставляет набор методов, и каждый тип, имеющий отношение к данному классу, должен предоставлять свою реализацию этих методов. Класс типов можно рассматривать как интерфейс.</p>
+    <p class="calibre16">Например, в стандартной библиотеке Haskell есть класс типов <span class="SourceText">Show</span>. Он обобщает все типы, объекты которых могут быть «показаны» (shown), то есть отображены в виде стандартной строки. Вот определение этого класса:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Show</span> a <span class="aaa">where</span></p>
+    <p class="aa">    <span>show</span> :: a -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь присутствует один-единственный метод <span class="SourceText">show</span>, принимающий в качестве аргумента объект типа <span class="SourceText">a</span> и возвращающий строковое отображение этого объекта.</p>
+    <p class="calibre16">Вы спросите, что это за тип такой — <span class="SourceText">a</span>? Ранее я уже упоминал термин <span class="calibre18">полиморфный тип</span>, так вот обозначенное буквой a — это он и есть. Благодаря этому метод <span class="SourceText">show</span> может применяться к значениям самых разных типов.</p>
+    <p class="calibre16">Возникает вопрос, откуда метод show узнаёт, <span class="calibre18">как</span> ему отобразить объект конкретного типа в виде строки? Ведь мы можем применить его к объектам разных типов, для которых понятие «показать» может иметь абсолютно разный смысл. На сцену выходит экземпляр класса типов.</p>
+    <h3 id="toc80" class="calibre22">Экземпляр класса типов</h3>
+    <p class="calibre16">Если класс типов <span class="SourceText">Show</span> — это логическая группа для типов, объекты которых можно показать, то экземпляр класса типов <span class="SourceText">Show</span> — это реальное объяснение того, <span class="calibre18">как</span> можно показать объект того или иного типа. И если мы хотим показывать объекты типа <span class="SourceText">IPAddress</span>, мы обязаны предоставить экземпляр класса типов <span class="SourceText">Show</span> для типа <span class="SourceText">IPAddress</span>. Сделаем же это:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">instance</span> <span class="aaaa">Show IPAddress</span> <span class="aaa">where</span></p>
+    <p class="aa">    <span>show</span> (<span class="aaaa">IPAddress</span> address) = </p>
+    <p class="aa">        <span class="aaa">if</span> address == <span class="a1">"127.0.0.1"</span> <span class="aaa">then</span> <span class="a1">"localhost"</span> <span class="aaa">else</span> address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы использовали ключевое слово <span class="SourceText">instance</span>, а полиморфный тип <span class="SourceText">a</span> заменили на тип <span class="SourceText">IPAddress</span>. Далее следует определение метода <span class="SourceText">show</span>, которое и объясняет, как отобразить значение типа <span class="SourceText">IPAddress</span> в виде строки.</p>
+    <p class="calibre16">Взглянем ещё раз на это определение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>show</span> (<span class="aaaa">IPAddress</span> address) = </p>
+    <p class="aa">    <span class="aaa">if</span> address == <span class="a1">"127.0.0.1"</span> <span class="aaa">then</span> <span class="a1">"localhost"</span> <span class="aaa">else</span> address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Первая строка показывает, что метод <span class="SourceText">show</span> принимает объект типа <span class="SourceText">IPAddress</span>, порождённый выражением <span class="SourceText">(IPAddress address)</span>. Далее следует простое условие, выводящее слово <span class="SourceText">"localhost"</span> в том случае, если адрес равен <span class="SourceText">"127.0.0.1"</span>.</p>
+    <p class="calibre16">А теперь пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> $ <span>show</span> $ <span class="aaaa">IPAddress</span> <span class="a1">"127.0.0.1"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Экземпляр класса типов <span class="SourceText">Show</span>, определённый для типа <span class="SourceText">IPAddress</span>, прекрасно справится со своими обязанностями, поэтому мы получим ожидаемый вывод:</p>
+    <p class="calibre16"> </p>
+    <p class="a">localhost</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Всё. Теперь вы кое-что знаете о типах.</p>
+    </body>
+</html>

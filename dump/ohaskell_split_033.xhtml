@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc103" class="calibre8">Новый тип</h2>
+    <p class="calibre16">Помимо ключевого ключевого <span class="SourceText">data</span> существует ещё одно слово, предназначенное для определения нового типа. Оно так и называется — <span class="SourceText">newtype</span>. И между этими двумя словами есть несколько важных отличий.</p>
+    <h3 id="toc104" class="calibre22">Один конструктор значения</h3>
+    <p class="calibre16">Тип, определяемый с помощью слова <span class="SourceText">newtype</span>, может иметь один и только один конструктор значения. Мы можем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="aa">                    <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">а вот такой код будет категорически отвергнут компилятором:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span> | <span class="aaaa">Host String </span></p>
+    <p class="aa">                    <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <h3 id="toc105" class="calibre22">Одно поле</h3>
+    <p class="calibre16">Следующее ограничение: одно и только одно поле. Мы можем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="aa">                    <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">или так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP</span> { value :: <span class="aaaa">String</span> } </p>
+    <p class="aa">                    <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">А вот такой код не будет принят компилятором:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String Int </span></p>
+    <p class="aa">                    <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Тип с нульарным конструктором тоже не пройдёт компиляцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">Color</span> = <span class="aaaa">Red</span> </p>
+    <h3 id="toc106" class="calibre22">Для чего он нужен</h3>
+    <p class="calibre16">Вы спросите, зачем же нужно слово <span class="SourceText">newtype</span>, если с ним связаны такие ограничения? И чем вообще обусловлены эти ограничения?</p>
+    <p class="calibre16">Фундаментальное назначение <span class="SourceText">newtype</span>, строго говоря, не в том, чтобы создавать новый тип, а в том, чтобы оборачивать один, уже существующий тип. Именно поэтому оно требует унарного конструктора значения и никакого иного. Грубо говоря, ключевое слово <span class="SourceText">newtype</span> может рассматриваться как нечто среднее между словами <span class="SourceText">data</span> и <span class="SourceText">type</span>. И это даёт нам одно преимущество, а именно эффективность времени выполнения.</p>
+    <p class="calibre16">Если мы определили вот такой тип:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">то с точки зрения программиста мы всего лишь обернули строковое значение в именную обёртку. Однако с точки зрения компилятора мы создали совершенно новый тип, хранящий в себе значение стандартного типа <span class="SourceText">String</span>. Именно поэтому работа с такой именной обёрткой связана с дополнительными накладными расходами на стадии выполнения (обусловленными «оборачиванием» и «разворачиванием» той самой внутренней строки). Да, эти расходы крошечны, но всё же…</p>
+    <p class="calibre16">Если же мы написали так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">newtype</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">мы сказали компилятору: «<span class="SourceText">IPAddress</span> — это всего лишь именная обёртка вокруг стандартной строки. Именно так её и воспринимай, и никаких лишних телодвижений не делай». Поэтому работа с таким типом будет чуток более эффективной.</p>
+    <p class="calibre16">Вот и всё. Теперь вы знаете: если нужно создать новый стиль «с нуля» — используйте <span class="SourceText">data</span>, если же нужна обыкновенная именная обёртка вокруг одного-единственного значения существующего типа — <span class="SourceText">newtype</span> к вашим услугам.</p>
+    </body>
+</html>

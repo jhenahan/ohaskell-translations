@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc34" class="calibre8">Чистые функции</h2>
+    <p class="calibre16">Раз уж Haskell — чисто функциональный язык программирования, поговорим о чистых функциях, как об одном из краеугольных камней этого языка.</p>
+    <p class="calibre16">Для начала вспомним школьный курс математики и сформулируем простейшее определение функции:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre24">Функция — это описание зависимости чего-то от чего-то.</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Так вот чистые функции в Haskell — это и есть функции в математическом смысле. Они представляют собой описание того, как входное значение определяет выходное значение.</p>
+    <p class="calibre16">Отсюда вытекает важнейшая характеристика чистых функций, а именно <span class="calibre18">отсутствие побочных эффектов</span>. Значение на входе чистой функции всецело и полностью определяет значение на выходе. Поэтому если мы миллион раз подадим на вход одно и то же значение, то на выходе мы миллион раз гарантированно получим один и тот же результат.</p>
+    <h3 id="toc35" class="calibre22">Объявляем</h3>
+    <p class="calibre16">Как и во многих других языках программирования, функцию сначала нужно объявить. Сделаем же это:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>simpleSum</span> :: <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">До символа <span class="SourceText">::</span> указывается имя функции, а после — тип.</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="calibre25">simpleSum</span> :: <span class="calibre25">Int -&gt; Int</span></p>
+    <p class="aa">|       |    |        |</p>
+    <p class="aa">   имя          тип</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Я понимаю, словосочетание «тип функции» звучит странно, но чистая функция — это значение, имеющее тип функции. </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Рассмотрим описание этого типа:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Обратите внимание на стрелочку. Именно эта стрелочка и говорит нам о том, что перед нами — чистая функция. Слева от неё указан тип единственного аргумента (в данном случае это стандартный тип <span class="SourceText">Int</span>), а справа от неё — тип выходного значения (тот же <span class="SourceText">Int</span>). Саму же стрелочку можно воспринимать как «ментальное указание» на поток информации, движущийся через функцию: от её входа к выходу, слева направо.</p>
+    <p class="calibre16">Напоминаю, что чистая функция обязана иметь хотя бы один аргумент и обязана что-то возвращать, ведь это и отражает суть математической функции: что-то обязательно подаём на вход и что-то обязательно получаем на выходе.</p>
+    <p class="calibre16">Кстати, о количестве аргументов. Разумеется, чистая функция может принимать и несколько аргументов. Вот тип функции, принимающей три аргумента:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Читать эту запись следует так: ищем последнюю по счёту (самую правую) стрелочку — она-то и будет тем самым разделителем: слева от неё идёт список типов аргументов, справа — тип возвращаемого выражения:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="calibre25">Int -&gt; Int -&gt; Int</span> -&gt; <span class="calibre25">Int</span></p>
+    <p class="aa">типы аргументов  |  |тип возвращаемого значения </p>
+    <h3 id="toc36" class="calibre22">Определяем</h3>
+    <p class="calibre16">Теперь функцию необходимо определить. Кстати, определить нужно <span class="calibre18">обязательно</span>. Например, в языке C или C++ мы можем спокойно объявить функцию и не определять её (при условии, что она никогда не вызывается). В Haskell более строгий подход: если объявил функцию — будь добр и определить её, в противном случае компилятор выскажет своё категорическое недовольство.</p>
+    <p class="calibre16">Поэтому сразу же после объявления пишем определение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>simpleSum</span> :: <span class="aaaa">Int</span> -&gt; <span class="aaaa">Int</span></p>
+    <p class="aa"><span>simpleSum</span> value = value + value</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь «ментальным разделителем» является знак равенства. Скелет данного выражения можно представить так:</p>
+    <p class="aa">NAME ARGUMENTS = BODY_EXPRESSION</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">где <span class="SourceText">NAME</span> — имя функции, <span class="SourceText">ARGUMENTS</span> — список имён аргументов (имён, а не типов), а <span class="SourceText">BODY_EXPRESSION</span> — тело функции. В данном случае у нас имеется один-единственный аргумент по имени <span class="SourceText">value</span>, а также имеется простое тело, в котором мы просто складываем аргумент с самим собой.</p>
+    <h3 id="toc37" class="calibre22">Вызываем</h3>
+    <p class="calibre16">Теперь нашу функцию можно вызывать. Сделаем же это с аргументом 4, или, как принято говорить в мире ФП, <span class="calibre18">применим</span> нашу функцию к аргументу 4:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> (<span>show</span> (<span>simpleSum</span> 4))</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Результат:</p>
+    <p class="calibre16"> </p>
+    <p class="a">8</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Готово. А теперь необходимо уточнить некоторые важные детали.</p>
+    <h3 id="toc38" class="calibre22">Выход из функции</h3>
+    <p class="calibre16">В языке C, если у нас есть функция с возвращаемым значением, мы обязаны где-то в её теле указать точку выхода с помощью инструкции <span class="SourceText">return</span>. Кроме того, точек выхода может быть несколько.</p>
+    <p class="calibre16">В Haskell всё обстоит совершенно иначе. Во-первых, точка выхода из чистой функции может быть только одна, а во-вторых, аналога инструкции <span class="SourceText">return</span> в Haskell нет. И если мы вспомним математическую природу чистой функции, то поймём, что иначе и быть не может. Ведь чистая функция представляет собой описание зависимости выходного значения от входных значений, поэтому её тело представляет собой совокупность выражений, которые вычисляются и в конечном итоге оставляют одно-единственное, последнее выражение. Так вот это последнее выражение и будет являться «точкой выхода» из функции.</p>
+    <p class="calibre16">Приведу пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>indicate</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>indicate</span> address = </p>
+    <p class="aa">    <span class="aaa">if</span> address == <span class="a1">"127.0.0.1"</span> <span class="aaa">then</span> <span class="a1">"localhost"</span> <span class="aaa">else</span> address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Эта функция принимает единственный аргумент стандартного типа <span class="SourceText">String</span>, соответствующий некоторому IP-адресу. В теле функции происходит проверка аргумента на равенство адресу <span class="SourceText">127.0.0.1</span>, в результате чего мы окажемся в одной из двух логических ветвей. В C++ это выглядело бы так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaaa">std::string</span> <span>indicate</span>( <span class="aaa">const</span> <span class="aaaa">std::string</span>&amp; address ) {</p>
+    <p class="aa">    <span class="aaa">if</span>( address == <span class="a1">"127.0.0.1"</span> ) {</p>
+    <p class="aa">        <span class="aaa">return</span> <span class="a1">"localhost"</span>;</p>
+    <p class="aa">    }</p>
+    <p class="aa">    <span class="aaa">return</span> address;</p>
+    <p class="aa">}</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Мы явно указали две точки выхода из функции. Но в Haskell этого делать не нужно, потому что когда мы окажемся в одной из двух логических ветвей, то выражение, на котором мы окажемся, и будет возвращено.</p>
+    <p class="calibre16">Чтобы стало понятнее, перепишем тело этой функции так, чтобы избавиться от выражения <span class="SourceText">if-then-else</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>indicate</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>indicate</span> <span class="a1">"127.0.0.1"</span> = <span class="a1">"localhost"</span></p>
+    <p class="aa"><span>indicate</span> address = address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Haskell позволяет вводить несколько определений для одной функции. Рассматривайте это как особый вариант перегрузки. Здесь мы говорим: «Если входной аргумент будет равен <span class="SourceText">127.0.0.1</span>, пусть будет использовано тело №1, в противном случае пусть будет использовано тело №2.» Следовательно, когда компилятор увидит вызов этой функции в коде, он просто подставит на место этого вызова соответствующее выражение: либо строку <span class="SourceText">localhost</span>, в случае использования первого тела, либо фактически переданный аргумент, в случае использования второго тела.</p>
+    <p class="calibre16">Теперь всё встало на свои места: явно определять точку выхода из чистой функции не нужно потому, что конечное выражение в теле этой функции просто заменит собою вызов функции. То есть если написано так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> (<span>indicate</span> <span class="a1">"127.0.0.1"</span>)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">то это то же самое, как если бы было написано просто:</p>
+    <p class="aa"><span>main</span> = <span>putStrLn</span> <span class="a1">"localhost"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Это — важное свойство чистых функций: мы всегда можем безопасно заменить места их вызова соответствующими возвращённым значениями, и работа приложения при этом останется неизменной. Именно поэтому работать с чистой функцией легко.</p>
+    <h3 id="toc39" class="calibre22">Охрана</h3>
+    <p class="calibre16">Существует ещё один способ задать выбор внутри функции без использования <span class="SourceText">if-then-else</span>. Называется он охрана (guard), хотя можно перевести и как «защита» или «стража». Перепишем нашу функцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>indicate</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>indicate</span> address </p>
+    <p class="aa">    | address == <span class="a1">"127.0.0.1"</span> = <span class="a1">"localhost"</span> </p>
+    <p class="aa">    | <span>null</span> address = <span class="a1">"empty IP-address"</span> </p>
+    <p class="aa">    | <span class="aaa">otherwise</span> = address</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Символ '|' отражает выбор, как если бы мы написали вместо него слово «либо». После него идёт логическое условие и соответствующее ему итоговое значение функции:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">    | address == <span class="a1">"127.0.0.1"</span> = <span class="a1">"localhost" </span></p>
+    <p class="aa">    | <span>null</span> address           = <span class="a1">"empty IP-address"</span> </p>
+    <p class="aa">    ...</p>
+    <p class="aa">     <span class="aa1">-- логическое условие   = итоговое значение</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Кстати, ветку <span class="SourceText">otherwise</span> необходимо использовать всегда. Если вы её пропустите, код пройдёт компиляцию, однако в вашем коде поселится коварная ошибка. В частности, если вы напишете так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>indicate</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>indicate</span> address </p>
+    <p class="aa">    | address == <span class="a1">"127.0.0.1"</span> = <span class="a1">"localhost"</span> </p>
+    <p class="aa">    | <span>null</span> address = <span class="a1">"empty IP-address"</span> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">а потом примените эту функцию к непустой строке, отличающейся от <span class="SourceText">"127.0.0.1"</span>, вы получите ошибку времени выполнения:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Real: src/Main.hs:(23,1)-(25,36): Non-exhaustive patterns in function indicate</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Будьте внимательны.</p>
+    <h3 id="toc40" class="calibre22">Локальные выражения</h3>
+    <p class="calibre16">Локальное выражение в теле функции — штука очень полезная, спасающая нас от магических чисел и от дубляжа.</p>
+    <p class="calibre16">Например, у нас есть такая функция:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>prepareLength</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="aa"><span>prepareLength</span> line = </p>
+    <p class="aa">    line * 0.4959</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы готовим длину некой линии путём умножения её первоначальной длины на заданный поправочный коэффициент. Но перед нами — классическое магическое число, смысл которого непонятен, и это плохо. Добавлять комментарий — не самое лучшее решение. Поэтому добавим локальное поясняющее выражение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>prepareLength</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="aa"><span>prepareLength</span> line = </p>
+    <p class="aa">    line * coefficient</p>
+    <p class="aa">    <span class="aaa">where</span> coefficient = 0.4959</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Ключевое слово <span class="SourceText">where</span> вводит выражение, которое можно использовать в теле функции. Рассматривайте его как псевдоним: идентификатор <span class="SourceText">coefficient</span> теперь можно использовать как аналог числового значения <span class="SourceText">0.4959</span>.</p>
+    <p class="calibre16">Локальных выражений может быть и несколько:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">...</p>
+    <p class="aa">    line * coefficient - correction</p>
+    <p class="aa">    <span class="aaa">where</span> coefficient = 0.4959</p>
+    <p class="aa">          correction = 0.0012</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Есть ещё один способ ввести локальное вспомогательное выражение, а именно с помощью ключевого слова <span class="SourceText">let</span>. На примере нашей последней функции это будет выглядеть так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>prepareLength</span> :: <span class="aaaa">Double</span> -&gt; <span class="aaaa">Double</span></p>
+    <p class="aa"><span>prepareLength</span> line = </p>
+    <p class="aa">    <span class="aaa">let</span> coefficient = 12.4959</p>
+    <p class="aa">        correction = 0.0012</p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    line * coefficient - correction</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Общая модель такая: </p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="SourceText1">let </span><span class="SourceText1"><span class="calibre18">bindings</span></span><span class="SourceText1"> in </span><span class="SourceText1"><span class="calibre18">expression</span></span>, </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">где <span class="SourceText"><span class="calibre18">bindings</span></span> — локальные выражения, а <span class="SourceText"><span class="calibre18">expression</span></span> — то место, где мы собираемся использовать эти локальные выражения.</p>
+    <p class="calibre16">Вы спросите, в чём же разница между <span class="SourceText">where</span> и <span class="SourceText">let</span>?</p>
+    <p class="calibre16">Во-первых, выражение <span class="SourceText">where</span> может быть только одно и только в конце тела функции, в то время как выражение <span class="SourceText">let</span> может присутствовать многократно и в любой части тела функции.</p>
+    <p class="calibre16">Во-вторых, выражение, введённое ключевым словом <span class="SourceText">where</span>, видимо в любой точке тела функции, в то время как выражение, введённое ключевым словом <span class="SourceText">let</span>, может быть «супер-локальным». Например:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">...</p>
+    <p class="aa">    <span class="aaa">let</span> coefficient = 12.4959</p>
+    <p class="aa">        correction = 0.0012</p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    line * coefficient - correction - (<span class="aaa">let</span> s = 10.9 <span class="aaa">in</span> s + 1) - s</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы ввели «супер-локальное» выражение с именем <span class="SourceText">s</span>, которое существует только внутри круглых скобок. Именно поэтому этот код не пройдёт компиляцию, ведь второе выражение <span class="SourceText">s</span> находится уже за пределами круглых скобок.</p>
+    <h3 id="toc41" class="calibre22">Без объявления</h3>
+    <p class="calibre16">Как вы помните, нельзя объявить функцию и при этом не определить её. А можно ли определить функцию без объявления? Ответ: можно.</p>
+    <p class="calibre16">Общепринятой практикой является объявлять функцию и тут же определять её. Да, мы <span class="calibre18">можем</span> написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">
+      <span class="aa1">-- Объявления нет, сразу определение</span>
+    </p>
+    <p class="aa"><span>prepareLength</span> line = </p>
+    <p class="aa">    ...</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">однако для сложных функций такая практика крайне не рекомендуется, поскольку определение становится беднее, ведь описание типов аргументов и возвращаемого значения помогает лучше понять работу функции. Кроме того, если вы не укажете эти типы, они станут полиморфными, но об этом мы поговорим позже.</p>
+    <p class="calibre16">Впрочем, если речь идёт о действительно тривиальных функциях, состоящих из одной-двух строк, говорящих сами за себя, тогда указание типов аргументов и возвращаемого значения будет выглядеть избыточным. В этом случае опускайте их.</p>
+    <p class="calibre16">Вот и всё, теперь вы знаете о чистых функциях. Кстати, они нам очень пригодятся — в последующих главах мы к ним вернёмся.</p>
+    </body>
+</html>

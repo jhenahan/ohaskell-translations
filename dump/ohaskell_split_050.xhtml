@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head>
+    <title>Неизв.</title>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC"/>
+    <meta content="" name="DC.title"/>
+    <meta content="" name="DC.subject"/>
+    <meta content="" name="DC.description"/>
+    <meta content="" name="DC.creator"/>
+    <meta content="2014-03-16T18:27:08" name="DC.date"/>
+    <meta content="" name="DC.language"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body dir="ltr" class="calibre">
+<h2 id="toc177" class="calibre8">О форматировании</h2>
+    <p class="calibre16">нет, речь пойдёт не об эстетике. Код на Haskell является форматно-зависимым, поэтому мы не можем расставлять пробелы и отступы там, где нам заблагорассудится. Необходимо придерживаться определённых правил.</p>
+    <h3 id="toc178" class="calibre22">Функция</h3>
+    <p class="calibre16">Если мы напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = </p>
+    <p class="aa"><span>putStrLn</span> <span class="a1">"Hi Haskeller!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">компилятор выскажет своё несогласие:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">parse error (possibly incorrect indentation or mismatched brackets)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Следующий пример:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"> <span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"> <span>main</span> = </p>
+    <p class="aa"> <span>putStrLn</span> <span class="a1">"Hi Haskeller!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь мы поставили один пробел перед каждой из трёх строк, однако и в этом случае компилятор закапризничает: </p>
+    <p class="calibre16"> </p>
+    <p class="aa">parse error on input `main'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Или вот так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"> <span>main</span> = </p>
+    <p class="aa"> <span>putStrLn</span> <span class="a1">"Hi Haskeller!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В этом случае мы получим ещё более странную ошибку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Illegal type signature: `IO () main'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Как видите, из-за пробела перед именем функции компилятор принял это имя за часть сигнатуры.</p>
+    <p class="calibre16">Когда в теле функции несколько строк, появляются дополнительные ограничения. Если напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Hi Haskeller!" </span></p>
+    <p class="aa">     <span>putStrLn</span> <span class="a1">"Hi again!"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">получим вот это:</p>
+    <p class="calibre16"> </p>
+    <p class="a">Couldn't match expected type `(String -&gt; IO ()) -&gt; [Char] -&gt; IO ()'</p>
+    <p class="a">                with actual type `IO ()'</p>
+    <p class="a">    The function `putStrLn' is applied to three arguments,</p>
+    <p class="a">    but its type `String -&gt; IO ()' has only one</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Из-за сдвига второй функции по отношению к первой компилятор подумал, что первая по счёту <span class="SourceText">putStrLn</span> применяется к трём аргументам. Если же напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">     <span>putStrLn</span> <span class="a1">"Hi Haskeller!" </span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Hi again!" </span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">получим уже знакомую нам ошибку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">parse error on input `putStrLn'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Здесь компилятор ругнулся уже на вторую по счёту <span class="SourceText">putStrLn</span>.</p>
+    <p class="calibre16">В общем, экспериментальным путём я выяснил, что форматирование кода функции должно соответствовать следующим правилам:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">Объявление и определение функции, должны начинаться с первого (самого левого) символа строки.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Если тело функции начинается со следующей строки после имени, перед этим телом должен присутствовать отступ от первого символа строки, хотя бы в один пробел.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Если тело функции состоит из нескольких выражений, стоящих на отдельной строке каждая, эти выражения должны быть вертикально выровнены по левому краю.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Поэтому придерживайтесь приблизительно такого шаблона:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Hi Haskeller!"</span> </p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Hi again!" </span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и компилятор будет просто счастлив.</p>
+    <h3 id="toc179" class="calibre22">Тип</h3>
+    <p class="calibre16">На код, связанный с типами, также наложены некоторые форматные ограничения.</p>
+    <p class="calibre16"> </p>
+    <p class="aa"> <span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Перед словом <span class="SourceText">data</span> стоит лишний пробел, и компилятор вновь вспоминает нас недобрым словом:</p>
+    <p class="calibre16"> </p>
+    <p class="a">parse error on input `data'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Вот такой код тоже не пройдёт компиляцию:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> </p>
+    <p class="aa"><span class="aaaa">IPAddress</span> = <span class="aaaa">IP</span> <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">равно как и такой:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = </p>
+    <p class="aa"><span class="aaaa">IP</span> <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и даже такой:</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> </p>
+    <p class="aa">= <span class="aaaa">IP String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">В ходе экспериментов было выяснено, что правила для кода определения типа схожи с вышеупомянутыми правилами для кода функции:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">Ключевое слово <span class="SourceText">data</span> начинается с самого левого символа строки.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Если объявление переходит на следующую строку, то перед ним должен быть хотя бы один пробел.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Поэтому пишите приблизительно так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">data</span> <span class="aaaa">IPAddress</span> = <span class="aaaa">IP String</span></p>
+    <p class="aa">                 <span class="aaa">deriving</span> <span class="aaaa">Show</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и компилятор будет вам благодарен.</p>
+    <h3 id="toc180" class="calibre22">Класс типов</h3>
+    <p class="calibre16">С классами типов — та же история. Если напишем так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Note</span> n <span class="aaa">where</span></p>
+    <p class="aa"><span>write</span> :: n -&gt; <span class="aaaa">Bool</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">получим экзотическую ошибку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">The type signature for `write' lacks an accompanying binding</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Если вздумаем написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Note</span> n <span class="aaa">where</span></p>
+    <p class="aa">  <span>write</span> :: n -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa"> <span>read</span> :: n -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">снова получим по башке:</p>
+    <p class="calibre16"> </p>
+    <p class="a">parse error on input `read'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">И если так напишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Note</span> n <span class="aaa">where</span></p>
+    <p class="aa">    <span>write</span> :: n -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa">    <span>read</span> </p>
+    <p class="aa">    :: n -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и даже если так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">  <span class="aaa">class</span> <span class="aaaa">Note</span> n <span class="aaa">where</span></p>
+    <p class="aa">    <span>write</span> :: n -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa">    <span>read</span> :: n -&gt; <span class="aaaa">String</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">компилятор будет принципиален до крайности и не пропустит такой код.</p>
+    <p class="calibre16">В общем, тут правила точно такие же:</p>
+    <ol class="calibre19">
+      <li class="calibre20">
+        <p class="calibre16">Начинаем с самого левого символа строки.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Перед методами — хотя бы однопробельный отступ.</p>
+      </li>
+      <li class="calibre20">
+        <p class="calibre16">Методы должны быть вертикально выровнены по левому краю.</p>
+      </li>
+    </ol>
+    <p class="calibre16">Следовательно, ублажаем компилятор и пишем примерно так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span class="aaa">class</span> <span class="aaaa">Note</span> n <span class="aaa">where</span></p>
+    <p class="aa">    <span>write</span> :: n -&gt; <span class="aaaa">Bool</span></p>
+    <p class="aa">    <span>read</span> :: n -&gt; <span class="aaaa">String</span></p>
+    <h3 id="toc181" class="calibre22">Константа</h3>
+    <p class="calibre16">Для отдельной константы правила точно такие же, как и для функции. Поэтому пишем:</p>
+    <p class="calibre16"> </p>
+    <p class="aa">coefficient :: <span class="aaaa">Double</span></p>
+    <p class="aa">coefficient = 0.0036</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и всё будет хорошо.</p>
+    <h3 id="toc182" class="calibre22">Условие</h3>
+    <p class="calibre16">Тут я выявил лишь одно ограничение — край ключевого слова <span class="SourceText">if</span> должен быть самым левым по отношению ко всем остальным частям выражения. То есть можно написать так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span class="aaa">if</span> 2 /= 2 </p>
+    <p class="aa">      <span class="aaa">then</span> </p>
+    <p class="aa">        <span>putStrLn</span> <span class="a1">"Impossible" </span></p>
+    <p class="aa">      <span class="aaa">else</span> </p>
+    <p class="aa">        <span>putStrLn</span> <span class="a1">"I believe"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span class="aaa">if</span> 2 /= 2 </p>
+    <p class="aa">        <span class="aaa">then</span> </p>
+    <p class="aa">      <span>putStrLn</span> <span class="a1">"Impossible" </span></p>
+    <p class="aa">        <span class="aaa">else</span> </p>
+    <p class="aa">      <span>putStrLn</span> <span class="a1">"I believe"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">и даже так:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span class="aaa">if</span> 2 /= 2 </p>
+    <p class="aa"> </p>
+    <p class="aa">     <span class="aaa">then</span> </p>
+    <p class="aa">     <span>putStrLn</span> <span class="a1">"Impossible"</span> </p>
+    <p class="aa">     <span class="aaa">else</span> </p>
+    <p class="aa">          <span>putStrLn</span> <span class="a1">"I believe"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Но вот такого компилятор не потерпит:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span class="aaa">if</span> 2 /= 2   </p>
+    <p class="aa">   <span class="aaa">then</span> </p>
+    <p class="aa">      <span>putStrLn</span> <span class="a1">"Impossible"</span></p>
+    <p class="aa">   <span class="aaa">else</span> </p>
+    <p class="aa">      <span>putStrLn</span> <span class="a1">"I believe"</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">равно как и такого:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>main</span> :: <span class="aaaa">IO</span> ()</p>
+    <p class="aa"><span>main</span> = <span class="aaa">do</span></p>
+    <p class="aa">    <span class="aaa">if</span> 2 /= 2   </p>
+    <p class="aa">    <span class="aaa">then</span> </p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"Impossible"</span></p>
+    <p class="aa">    <span class="aaa">else</span> </p>
+    <p class="aa">    <span>putStrLn</span> <span class="a1">"I believe"</span></p>
+    <h3 id="toc183" class="calibre22">Локальные выражения</h3>
+    <p class="calibre16">Эти друзья менее прихотливы. В отношении выражения <span class="SourceText">where</span> я нашёл только одно ограничение:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>prepare</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>prepare</span> str = </p>
+    <p class="aa">    str ++ helper</p>
+    <p class="aa"><span class="aaa">where</span> </p>
+    <p class="aa">    helper = <span class="a1">"dear. "</span></p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Получим ошибку:</p>
+    <p class="calibre16"> </p>
+    <p class="a">parse error on input `where'</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Такого же рода ограничение действует и на <span class="SourceText">let</span>:</p>
+    <p class="calibre16"> </p>
+    <p class="aa"><span>prepare</span> :: <span class="aaaa">String</span> -&gt; <span class="aaaa">String</span></p>
+    <p class="aa"><span>prepare</span> str = </p>
+    <p class="aa"><span class="aaa">let</span> helper = <span class="a1">"dear. "</span></p>
+    <p class="aa">    <span class="aaa">in</span></p>
+    <p class="aa">    str ++ helper </p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Однако ошибка будет другой:</p>
+    <p class="calibre16"> </p>
+    <p class="a">parse error (possibly incorrect indentation or mismatched brackets)</p>
+    <p class="calibre16"> </p>
+    <p class="calibre16">Суть вы уловили: пусть <span class="SourceText">where</span> и <span class="SourceText">let</span> гармонируют с остальным кодом тела функции.</p>
+    <h3 id="toc184" class="calibre22">Вывод</h3>
+    <p class="calibre16">Пишите аккуратно, без лишних изысков и в едином стиле. Да, многие разработчики не любят, когда синтаксис языка форматно-зависимый, но, как говорится, что есть, то есть. Кстати, упомянутые выше ограничения в некотором смысле дисциплинируют программиста, так что в них тоже можно усмотреть большой плюс.</p>
+    </body>
+</html>
