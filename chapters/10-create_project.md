@@ -116,7 +116,7 @@ However we can't actually build the project at the moment as the line:
 
 is commented. The syntax used in this file is similar to one of Haskell, that's
 why one-line comments here, as well as in the source code, begin with two
-minuses in the row. Multi-line comment which you also need are enclosed between
+minuses in the row. Multi-line comment which you also need, are enclosed between
 the symbols `{-` and `-}.
 
 What we should do is to uncomment that line and put there a name of the `Main.hs`
