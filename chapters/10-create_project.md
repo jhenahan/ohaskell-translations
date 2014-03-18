@@ -10,33 +10,33 @@ Haskell Platform contains two essential components, which you should know about:
 
 Got it? Now feel free to forget. Especially about the interpreter. Cause you
 gonna use Haskell in real world and therefore all your projects would be compiled.
-However, the direct usage of `ghc` compiler will hardly be necessary for you.
-Despite that `ghci` interpreter may be useful sometimes, you can do without it.
+Moreover, the direct usage of `ghc` compiler will hardly be necessary for you.
+Of course, `ghci` interpreter may be useful sometimes, but you can do without it.
 
 In real world you ain't no need creating file [`Main.hs`](.hs -- standard file 
 extension for source-code written in Haskell) on your desktop and then
-feed it to compiler. In opposite, you will create a normal working project with
+feeding it to compiler. Instead, you will create a normal working project with
 logical inner structure. So let's start with it. A convenient
 utility from Haskell Platform with unusual name [`cabal`](Acronym formed from
 **c**ommon **a**rchitecture for **b**uilding **a**pplications and **l**ibraries.)
 will be our assistant.
 
-`Cabal` utility is intended for compiling projects. Sure you heard about things
+`Cabal` utility is intended for compiling projects. Sure, you heard about things
 like `cmake` or `qmake`, take `cabal` as "cmake specially for Haskell". 
 
 Let us create. Of course, all actions described below imply your strong friendship
-with the command line. I will demonstrate Unix commands, if you are using
-Windows -- adapt the examples for yourself.
+with a command line. I will demonstrate Unix commands, if you are using
+Windows -- adapt these examples for yourself.
 
 #### Preparing the structure ####
 
-Open the terminal and create:
+Open the terminal and start creating:
 	
 	$ mkdir -p Real/src/Utils
 	$ touch Real/src/Main.hs
 	$ touch Real/src/Utils/Helpers.hs
 
-Here we have a directory `Real` with a regular structure:
+Now we have a directory `Real` with a regular structure:
 
 	Real/
 	└── src
@@ -64,7 +64,7 @@ Execute a command:
 
 You will get into an interactive dialog in which you will be offered to answer
 a few questions about your project. At the end of the dialog project files are
-creating automatically and the content of our directory will be structured as
+created automatically and the content of our directory is structured as
 follows:
 
 	.
@@ -116,10 +116,10 @@ However we can't actually build the project at the moment as the line:
 
 is commented. The syntax used in this file is similar to one of Haskell, that's
 why one-line comments here, as well as in the source code, begin with two
-minuses in the row. Multi-line comment which you also need заключается between
+minuses in the row. Multi-line comment which you also need are enclosed between
 the symbols `{-` and `-}.
 
-What we should do is uncomment that line and put there a name of the `Main.hs`
+What we should do is to uncomment that line and put there a name of the `Main.hs`
 file which contains function [`main`](Function `main` -- the main function of
 application, similar to `int main\(\)` in the C language.).
 
@@ -142,7 +142,7 @@ it, I draw your attention to the last part of the file `Real.cabal`.
 
 Can you see the two-space indentation of the last four lines? It turns out that
 such indent is essential and the project wouldn't build without it. Furthermore,
-this indent should be at least two spaces. I recommend to use four for beauty.
+this indent should be at least two spaces. I recommend to use four spaces for beauty.
 
 One more detail. It is not necessary but wouldn't be superfluous. Append
 section `executable Real` with this line:
