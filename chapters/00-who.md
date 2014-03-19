@@ -1,6 +1,6 @@
 ### Who ###
 
-> "I, Baron Munchhausen, am an ordinary man ..."
+> "I, Baron Munchausen, am an ordinary man ..."
 
 And I'm an ordinary programmer. An autodidact. I once thought that software development is the most boring kind of human activity. For the last eight years I think it's one of the most interesting professions.
 
