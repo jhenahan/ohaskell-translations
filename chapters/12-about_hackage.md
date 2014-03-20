@@ -67,7 +67,7 @@ source code). There are quite many modules in the `text` package, we will take
 the first one, `Data.Text`. Open `Main.hs` and write in the beginning:
 
 ```haskell
-import haskell
+import Data.Text
 ```
 
 Ready. Now we can use different goodies from that module. In the nearest future
