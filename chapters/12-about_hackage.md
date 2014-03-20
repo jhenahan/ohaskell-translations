@@ -20,13 +20,13 @@ In order to use a package you need to complete four steps:
 
 #### Finding ####
 
-I recommend you to search packages here:
+I recommend you to search for packages here:
 
 1. [Hoogle](http://www.haskell.org/hoogle)
 2. [Hayoo!](http://holumbus.fh-wedel.de/hayoo/hayoo.html)
 
 Just type the required name, or category, or some associative word in the search 
-box and you get lots of interesting results.
+box and you get a lot of interesting results.
 
 For example, let's install package `text`, an advanced package to work with...
 text. Surprise, surprise.
@@ -44,7 +44,7 @@ With this command we updated the list of available packages. It is recommended
 to run this command from time to time, in order to stay on the "cutting-edge"
 of the Hackage development.
 
-After list's update we can install the required package:
+After package list is updated we can install the required package:
 
 	$ cabal install text
 
@@ -75,6 +75,6 @@ you will find out which of them we are going to use.
 
 #### About Prelude ####
 
-There is a standard module which is imported to all your modules by default.
+There is a standard module which is imported into all your modules by default.
 Its name is `Prelude`. It contains the most basic Haskell instruments, you will
 use many of them all the time.
