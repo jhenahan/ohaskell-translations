@@ -2,7 +2,7 @@
 
 Haskell is a general-purpose purely functional programming language.
 
-Historically it became so, that today the most popular approach to programming 
+Historically it became so that today the most popular approach to programming 
 is *imperative*. With such approach a program is a sequence of instructions,
 which should be executed exactly in the specified order. Furthermore, imperative
 programming imply the existence of an assignment operator, as a programmer often
