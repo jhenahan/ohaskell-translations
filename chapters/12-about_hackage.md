@@ -1,7 +1,7 @@
 ### About a hackage ###
 
 If you worked with Linux, you should be familiar with а concept of a "repository":
-a sort of centralized place from which you can get a lot of goodies. Hackage is the 
+a sort of centralized place from which you can get a lot of goodies. Hackage is the
 main repository in the world of Haskell.
 
 The name comes from the merging words **H**askell and p**ackage**. It exists
@@ -25,7 +25,7 @@ I recommend you to search for packages here:
 1. [Hoogle](http://www.haskell.org/hoogle)
 2. [Hayoo!](http://holumbus.fh-wedel.de/hayoo/hayoo.html)
 
-Just type the required name, or category, or some associative word in the search 
+Just type the required name, or category, or some associative word in the search
 box and you get a lot of interesting results.
 
 For example, let's install package `text`, an advanced package to work with...
@@ -63,7 +63,7 @@ And the last step.
 #### Importing modules ####
 
 Package consists of modules (and modules, as you already know, are files with
-source code). There are quite many modules in the `text` package, we will take 
+source code). There are quite many modules in the `text` package, we will take
 the first one, `Data.Text`. Open `Main.hs` and write in the beginning:
 
 ```haskell
