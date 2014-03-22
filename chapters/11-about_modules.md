@@ -8,9 +8,11 @@ Haskell has no header files. Each module is considered as a separate unit, conta
 
 Let's open empty file `Helpers.hs` and write
 
-    module Helpers where
+```haskell
+module Helpers where
 	
-    hello user = "Hi, " ++ user
+hello user = "Hi, " ++ user
+``` 
 
 The first string declares the name of the module - `Helpers`. Then, after `where` keyword, we fill our module with contents. The content we have is really simple, but don't ask me yet, what `hello` is. We will soon find out.
 
@@ -18,9 +20,11 @@ The first string declares the name of the module - `Helpers`. Then, after `where
 
 Now we open `Main.hs` file and change it a little bit:
 
-    import Helpers
+```haskell
+import Helpers
 
-    main = putStrLn (hello "denis")
+main = putStrLn (hello "denis")
+```
 
 We included the `Helpers` module using `import` statement. Now we can use the contents of the module, namely that thing by the name `hello`.
 
